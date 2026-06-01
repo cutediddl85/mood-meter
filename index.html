@@ -261,7 +261,7 @@ body.print-month #monthPrintPage{
   .wrap{max-width:none!important;width:100%!important;padding:0!important;margin:0!important}
   #weekRange{display:block!important;text-align:center!important;font-weight:900!important;font-size:14px!important;margin:0 0 4px!important}
 
-  /* 1쪽 상단: 빨강·노랑·파랑·초록 누계 기록 */
+  /* 1쪽 상단: 초록 누계 기록 */
   .summaryGrid{
     display:grid!important;
     grid-template-columns:repeat(4,1fr)!important;
@@ -905,7 +905,7 @@ body.print-month #monthPrintPage{
       <div>← 쾌적함 낮음</div>
       <div>쾌적함 높음 →</div>
     </div>
-    <div class="topLabels"><div class="quadLabel quadRed">빨강: 고활력 · 낮은 쾌적함</div><div class="quadLabel quadYellow">노랑: 고활력 · 높은 쾌적함</div></div><div id="meter" class="meter"></div><div class="bottomLabels"><div class="quadLabel quadBlue">파랑: 저활력 · 낮은 쾌적함</div><div class="quadLabel quadGreen">초록: 저활력 · 높은 쾌적함</div></div>
+    <div class="topLabels"><div class="quadLabel quadRed">고활력 · 낮은 쾌적함</div><div class="quadLabel quadYellow">고활력 · 높은 쾌적함</div></div><div id="meter" class="meter"></div><div class="bottomLabels"><div class="quadLabel quadBlue">저활력 · 낮은 쾌적함</div><div class="quadLabel quadGreen">저활력 · 높은 쾌적함</div></div>
 
 <div class="comfortAxis sameComfortAxis">
   <div>← 쾌적함 낮음</div>
@@ -920,7 +920,7 @@ body.print-month #monthPrintPage{
 </div></div>
 <div class="selectedList"><h3>오늘 선택한 감정과 이벤트</h3><div id="selectedItems" class="selectedItems"></div><div class="actions"><button class="action" onclick="saveDay()">저장하기</button><button class="action" onclick="clearToday()">오늘 선택 초기화</button></div><div class="footerNote">브라우저에 자동 저장됩니다. 같은 기기에서 이어서 볼 수 있습니다.</div></div>
 </section>
-<section id="week" class="panel"><div class="notice"><b>주간 누계</b> 7일 동안 선택한 감정이 빨강·노랑·파랑·초록 중 어디에 많이 머물렀는지 확인합니다.</div><div id="weekRange" style="text-align:center;font-weight:900;margin:10px 0;font-size:18px"></div><div class="actions"><button class="action printBtn" onclick="window.print()">주간 인쇄하기</button></div><div id="dayLegend" class="dayLegend"></div><div id="summary" class="summaryGrid"></div><div class="meterbox" style="margin-top:12px">
+<section id="week" class="panel"><div class="notice"><b>주간 누계</b> 7일 동안 선택한 감정이 초록 중 어디에 많이 머물렀는지 확인합니다.</div><div id="weekRange" style="text-align:center;font-weight:900;margin:10px 0;font-size:18px"></div><div class="actions"><button class="action printBtn" onclick="window.print()">주간 인쇄하기</button></div><div id="dayLegend" class="dayLegend"></div><div id="summary" class="summaryGrid"></div><div class="meterbox" style="margin-top:12px">
   <div class="meterWithSideAxis">
     <div class="sideAxis">
       <span class="verticalEnergy">활<br>력<br>높<br>음<br>↑</span>
@@ -932,13 +932,13 @@ body.print-month #monthPrintPage{
         <div>쾌적함 높음 →</div>
       </div>
       <div class="topLabels">
-        <div class="quadLabel quadRed">빨강: 고활력 · 낮은 쾌적함</div>
-        <div class="quadLabel quadYellow">노랑: 고활력 · 높은 쾌적함</div>
+        <div class="quadLabel quadRed">고활력 · 낮은 쾌적함</div>
+        <div class="quadLabel quadYellow">고활력 · 높은 쾌적함</div>
       </div>
       <div id="weekMeter" class="meter"></div>
       <div class="bottomLabels">
-        <div class="quadLabel quadBlue">파랑: 저활력 · 낮은 쾌적함</div>
-        <div class="quadLabel quadGreen">초록: 저활력 · 높은 쾌적함</div>
+        <div class="quadLabel quadBlue">저활력 · 낮은 쾌적함</div>
+        <div class="quadLabel quadGreen">저활력 · 높은 쾌적함</div>
       </div>
       <div class="comfortAxis sameComfortAxis">
         <div>← 쾌적함 낮음</div>
@@ -1055,7 +1055,7 @@ const dates=getWeekDates();
 dayLegend.innerHTML=dayInfo.map((d,i)=>`<span class="dayLegendItem"><span class="dayLegendDot" style="--day:${d[2]}"></span>${d[1]} ${fmtDate(dates[i])}</span>`).join('');
 weekRange.innerHTML=`주간 기록 (${fmtDate(dates[0])} 월요일 ~ ${fmtDate(dates[6])} 일요일)`;
 }
-function renderWeekLog(){weekLog.innerHTML=dayInfo.map(d=>{const arr=data[d[0]];return `<div class="logDay"><b><span class="smallDot" style="--day:${d[2]}"></span> ${d[1]}요일 (${fmtDate(getWeekDates()[dayInfo.findIndex(x=>x[0]===d[0])])})</b><div>${arr.length?arr.map(x=>`<div class="emotionEventRow"><span class="qPill ${x.q}">${qName(x.q)} · ${x.ko}</span>${x.event?`<span class="inlineEvent ${x.q}">${x.event}</span>`:`<span class="inlineEvent ${x.q}">이벤트 기록 없음</span>`}</div>`).join(''):'기록 없음'}</div></div>`}).join('')}
+function renderWeekLog(){weekLog.innerHTML=dayInfo.map(d=>{const arr=data[d[0]];return `<div class="logDay"><b><span class="smallDot" style="--day:${d[2]}"></span> ${d[1]}요일 (${fmtDate(getWeekDates()[dayInfo.findIndex(x=>x[0]===d[0])])})</b><div>${arr.length?arr.map(x=>`<div class="emotionEventRow"><span class="qPill ${x.q}">${x.ko}</span>${x.event?`<span class="inlineEvent ${x.q}">${x.event}</span>`:`<span class="inlineEvent ${x.q}">이벤트 기록 없음</span>`}</div>`).join(''):'기록 없음'}</div></div>`}).join('')}
 function renderAll(){renderDays();renderMeter();renderSelected();renderSummary();renderDayLegend();renderMeter('weekMeter',true);renderWeekLog();}
 
 function pad2(n){return String(n).padStart(2,'0')}
@@ -1189,13 +1189,13 @@ function renderRangeMoodMeter(boxId,wStart,wEnd,titleText){
           <div>쾌적함 높음 →</div>
         </div>
         <div class="topLabels">
-          <div class="quadLabel quadRed">빨강: 고활력 · 낮은 쾌적함</div>
-          <div class="quadLabel quadYellow">노랑: 고활력 · 높은 쾌적함</div>
+          <div class="quadLabel quadRed">고활력 · 낮은 쾌적함</div>
+          <div class="quadLabel quadYellow">고활력 · 높은 쾌적함</div>
         </div>
         <div id="${meterId}" class="meter"></div>
         <div class="bottomLabels">
-          <div class="quadLabel quadBlue">파랑: 저활력 · 낮은 쾌적함</div>
-          <div class="quadLabel quadGreen">초록: 저활력 · 높은 쾌적함</div>
+          <div class="quadLabel quadBlue">저활력 · 낮은 쾌적함</div>
+          <div class="quadLabel quadGreen">저활력 · 높은 쾌적함</div>
         </div>
         <div class="comfortAxis sameComfortAxis">
           <div>← 쾌적함 낮음</div>
@@ -1243,7 +1243,7 @@ function renderWeekDaysInto(elId,titleId,wStart,wEnd,titleText){
     const color=dayColorFromDate(d.date);
     const dateLabel=`${fmtDate(d.date)} ${getDayNameFromDate(d.date)}요일`;
     const rows=d.arr.length
-      ? d.arr.map(x=>`<div class="emotionEventRow"><span class="qPill ${x.q}">${qName(x.q)} · ${x.ko}</span>${x.event?`<span class="inlineEvent ${x.q}">${x.event}</span>`:`<span class="inlineEvent ${x.q}">이벤트 기록 없음</span>`}</div>`).join('')
+      ? d.arr.map(x=>`<div class="emotionEventRow"><span class="qPill ${x.q}">${x.ko}</span>${x.event?`<span class="inlineEvent ${x.q}">${x.event}</span>`:`<span class="inlineEvent ${x.q}">이벤트 기록 없음</span>`}</div>`).join('')
       : '<div class="footerNote">기록 없음</div>';
     return `<div class="dayDetailCard"><h4><span class="smallDot" style="--day:${color}"></span> ${dateLabel}</h4>${rows}</div>`;
   }).join('');
