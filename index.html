@@ -640,13 +640,13 @@ body.print-month #monthPrintPage{
     gap:2px!important;
   }
   #weekMeter .cell{
-    font-size:10.5px!important;
+    font-size:11.6px!important;
     line-height:1.03!important;
     padding:1px!important;
     border-radius:3px!important;
   }
   #weekMeter .cell .en{
-    font-size:7px!important;
+    font-size:7.8px!important;
     margin-top:1px!important;
   }
   #weekMeter .markers{
@@ -718,11 +718,11 @@ body.print-month #monthPrintPage{
     gap:2px!important;
   }
   #weekMeter .cell{
-    font-size:10.8px!important;
+    font-size:11.6px!important;
     line-height:1.06!important;
   }
   #weekMeter .cell .en{
-    font-size:7.2px!important;
+    font-size:7.8px!important;
   }
 
   /* 4분면 설명칸 글자가 길어져도 한 줄 안에서 안정적으로 보이게 */
@@ -944,13 +944,13 @@ body.print-month #monthPrintPage{
     gap:2px!important;
   }
   body.print-month #monthPrintMeter .cell{
-    font-size:10.5px!important;
+    font-size:11.6px!important;
     line-height:1.03!important;
     padding:1px!important;
     border-radius:3px!important;
   }
   body.print-month #monthPrintMeter .cell .en{
-    font-size:7px!important;
+    font-size:7.8px!important;
     margin-top:1px!important;
   }
 }
@@ -971,7 +971,7 @@ body.print-month #monthPrintPage{
 <div class="tabs"><button class="tab active" data-tab="today">오늘 기록</button><button class="tab" data-tab="week">주간 누계</button><button class="tab" data-tab="month">월간 누계</button><button class="tab" data-tab="year">연간 누계</button></div>
 <main class="wrap">
 <section id="today" class="panel active">
-<div class="guide"><div class="notice"><b>1단계</b> 요일을 고르고, 아래 4분면 무드미터에서 감정 3개를 선택하세요. 선택한 칸에는 요일 색 점이 표시됩니다.</div><div class="days" id="days"></div></div>
+<div class="guide"><div class="notice"><b>1단계</b> 날짜와 요일을 확인하고, 아래 4분면 무드미터에서 감정 3개를 선택하세요. 선택한 칸에는 요일 색 점이 표시됩니다.</div><div class="days" id="days"></div></div>
 <div class="meterbox"><div class="meterWithSideAxis">
   <div class="sideAxis">
     <span class="verticalEnergy">활<br>력<br>높<br>음<br>↑</span>
@@ -1119,10 +1119,16 @@ const red=[['격분한','Enraged'],['공황에 빠진','Panicked'],['스트레�
 const yellow=[['놀란','Surprised'],['긍정적인','Upbeat'],['흥겨운','Festive'],['아주 신나는','Exhilarated'],['황홀한','Ecstatic'],['들뜬','Hyper'],['쾌활한','Cheerful'],['동기 부여된','Motivated'],['영감을 받은','Inspired'],['의기양양한','Elated'],['기운이 넘치는','Energized'],['활발한','Lively'],['흥분한','Excited'],['낙관적인','Optimistic'],['열광하는','Enthusiastic'],['만족스러운','Pleased'],['집중하는','Focused'],['행복한','Happy'],['자랑스러운','Proud'],['짜릿한','Thrilled'],['유쾌한','Pleasant'],['기쁜','Joyful'],['희망찬','Hopeful'],['재미있는','Playful'],['더없이 행복한','Blissful']];
 const blue=[['역겨운','Disgusted'],['침울한','Glum'],['실망스러운','Disappointed'],['의욕 없는','Down'],['냉담한','Apathetic'],['비관적인','Pessimistic'],['시무룩한','Morose'],['낙담한','Discouraged'],['슬픈','Sad'],['지루한','Bored'],['소외된','Alienated'],['비참한','Miserable'],['쓸쓸한','Lonely'],['기죽은','Disheartened'],['피곤한','Tired'],['의기소침한','Despondent'],['우울한','Depressed'],['뚱한','Sullen'],['기진맥진한','Exhausted'],['지친','Fatigued'],['절망한','Despairing'],['가망 없는','Hopeless'],['고독한','Desolate'],['소모된','Spent'],['진이 빠진','Drained']];
 const green=[['속 편한','At Ease'],['태평한','Easygoing'],['자족하는','Content'],['다정한','Loving'],['충만한','Fulfilled'],['평온한','Calm'],['안전한','Secure'],['만족스러운','Satisfied'],['감사하는','Grateful'],['감동적인','Touched'],['여유로운','Relaxed'],['차분한','Chill'],['편안한','Restful'],['축복받은','Blessed'],['안정적인','Balanced'],['한가로운','Mellow'],['생각에 잠긴','Thoughtful'],['평화로운','Peaceful'],['편한','Comfortable'],['근심 걱정 없는','Carefree'],['나른한','Sleepy'],['흐뭇한','Complacent'],['고요한','Tranquil'],['안락한','Cozy'],['안온한','Serene']];
-let currentDay='mon'; let data=JSON.parse(localStorage.getItem('moodWeekV2')||'{}'); dayInfo.forEach(d=>{if(!data[d[0]])data[d[0]]=[]});
+let currentDay=(['sun','mon','tue','wed','thu','fri','sat'])[new Date().getDay()]; let data=JSON.parse(localStorage.getItem('moodWeekV2')||'{}'); dayInfo.forEach(d=>{if(!data[d[0]])data[d[0]]=[]});
 function allCells(){let rows=[]; for(let r=0;r<5;r++){for(let c=0;c<5;c++)rows.push({q:'red',...obj(red[r*5+c])}); for(let c=0;c<5;c++)rows.push({q:'yellow',...obj(yellow[r*5+c])});} for(let r=0;r<5;r++){for(let c=0;c<5;c++)rows.push({q:'blue',...obj(blue[r*5+c])}); for(let c=0;c<5;c++)rows.push({q:'green',...obj(green[r*5+c])});} return rows.map((x,i)=>({...x,id:x.q+'-'+i}));} function obj(a){return{ko:a[0],en:a[1]}}
 const cells=allCells();
-function renderDays(){days.innerHTML=dayInfo.map(d=>`<button class="daybtn ${d[3]} ${currentDay===d[0]?'active':''}" style="--day:${d[2]}" onclick="setDay('${d[0]}')"><span class="dot"></span>${d[1]}</button>`).join('')}
+function renderDays(){
+  const weekDates=getWeekDates();
+  days.innerHTML=dayInfo.map((d,i)=>{
+    const dateLabel=fmtDate(weekDates[i]);
+    return `<button class="daybtn ${d[3]} ${currentDay===d[0]?'active':''}" style="--day:${d[2]}" onclick="setDay('${d[0]}')"><span class="dot"></span>${dateLabel} ${d[1]}</button>`;
+  }).join('');
+}
 function setDay(d){currentDay=d;renderDays();renderMeter();renderSelected();}
 function renderMeter(target='meter',week=false){const el=document.getElementById(target);el.innerHTML=cells.map(cell=>{const selected=data[currentDay].some(x=>x.id===cell.id);let marks=''; if(week){dayInfo.forEach(d=>{if(data[d[0]].some(x=>x.id===cell.id))marks+=`<span class="marker" style="--day:${d[2]}"></span>`})} else if(selected){marks=`<span class="marker" style="--day:${dayInfo.find(d=>d[0]===currentDay)[2]}"></span>`} return `<button class="cell ${cell.q} ${selected&&!week?'selected':''}" onclick="toggleCell('${cell.id}')"><span>${cell.ko}</span><span class="en">${cell.en}</span><span class="markers">${marks}</span></button>`}).join('')}
 function toggleCell(id){let arr=data[currentDay]; const idx=arr.findIndex(x=>x.id===id); if(idx>=0)arr.splice(idx,1); else{ if(arr.length>=3){alert('하루에 감정은 3개까지 선택할 수 있어요.');return;} const cell=cells.find(x=>x.id===id); arr.push({...cell,event:''}); } save();renderMeter();renderSelected();}
@@ -1595,6 +1601,26 @@ function printSelectedYearMonth(){
 }
 
 
+
+function getTodayDayKey(){
+  return ['sun','mon','tue','wed','thu','fri','sat'][new Date().getDay()];
+}
+
+function syncCurrentDayToToday(){
+  const todayDay=getTodayDayKey();
+  currentDay=todayDay;
+
+  const dk=currentWeekDateKey(currentDay);
+  if(datedData[dk]){
+    data[currentDay]=datedData[dk];
+  }
+
+  if(typeof renderDays==='function') renderDays();
+  if(typeof renderMeter==='function') renderMeter();
+  if(typeof renderSelected==='function') renderSelected();
+  if(typeof renderDayLegend==='function') renderDayLegend();
+}
+
 function getTodayKey(){
   const d=new Date();
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
@@ -1614,12 +1640,14 @@ setInterval(()=>{
     const dayMap=['sun','mon','tue','wed','thu','fri','sat'];
     const todayDay=dayMap[now.getDay()];
 
-    if(typeof setDay==='function'){
-      setDay(todayDay);
-    }
+    currentDay=todayDay;
 
     if(typeof renderAll==='function'){
       renderAll();
+    }
+
+    if(typeof syncCurrentDayToToday==='function'){
+      syncCurrentDayToToday();
     }
   }
 },60000);
@@ -1650,9 +1678,11 @@ function startMoodMeter(){
   const title=document.getElementById('mainTitle');
   if(title) title.textContent=name+'의 무드미터';
   if(typeof renderAll==='function') renderAll();
+  if(typeof syncCurrentDayToToday==='function') syncCurrentDayToToday();
 }
 
 window.addEventListener('load',()=>{
+  currentDay=getTodayDayKey();
   const savedName=localStorage.getItem('moodUserName')||'';
   const input=document.getElementById('userNameInput');
   if(input) input.value=savedName;
