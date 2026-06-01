@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>무드미터 주간 감정 기록</title>
+<style>
+:root{--red:#c62828;--yellow:#f7c948;--blue:#1565c0;--green:#2e7d32;--bg:#f7f7f2;--ink:#222;--card:#fff;--line:#ffffff;}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);} header{padding:20px 16px 10px;text-align:center} h1{margin:0;font-size:clamp(26px,5vw,48px);letter-spacing:.5px} .subtitle{margin-top:6px;color:#555}.wrap{max-width:1220px;margin:0 auto;padding:0 12px 40px}.tabs{display:flex;gap:8px;justify-content:center;position:sticky;top:0;background:rgba(247,247,242,.95);backdrop-filter:blur(8px);z-index:10;padding:10px}.tabs button,.action{border:0;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer;background:#222;color:white}.tabs button.active{background:#6d4c41}.panel{display:none}.panel.active{display:block}.guide{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0 14px}.notice{background:white;border-radius:18px;padding:14px 16px;box-shadow:0 4px 16px rgba(0,0,0,.06)}.days{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}.daybtn{border:2px solid transparent;border-radius:999px;padding:8px 13px;font-weight:800;background:white;cursor:pointer}.daybtn.active{border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.08)}.monday{--day:#8e44ad}.tuesday{--day:#ff69b4}.wednesday{--day:#2c3e50}.thursday{--day:#ecf0f1}.friday{--day:#1abc9c}.saturday{--day:#8d6e63}.sunday{--day:#95a5a6}.daybtn .dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--day);border:1px solid #555;margin-right:5px;vertical-align:-1px}.meterbox{background:white;border-radius:22px;padding:18px;box-shadow:0 4px 20px rgba(0,0,0,.07);overflow:auto}.axisTop{padding:0 10px !important;justify-content:space-between;display:flex;justify-content:space-between;font-weight:800;margin:0 0 8px;color:#555}.meter{display:grid;grid-template-columns:repeat(10,minmax(88px,1fr));grid-template-rows:repeat(10,72px);gap:3px;min-width:920px}.cell{position:relative;border:0;border-radius:5px;padding:5px 4px;text-align:center;color:white;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}.cell .en{font-size:10px;font-weight:600;opacity:.9;margin-top:3px}.cell.red{background:linear-gradient(135deg,#8e1b1b,#f05a28)}.cell.yellow{background:linear-gradient(135deg,#f6ea65,#f6a91a);color:#222}.cell.blue{background:linear-gradient(135deg,#1a237e,#2da9e9)}.cell.green{background:linear-gradient(135deg,#a5d927,#0f8f2f)}.cell.selected{outline:4px solid #111;z-index:2;transform:translateY(-2px)}.markers{position:absolute;bottom:3px;left:4px;right:4px;display:flex;gap:2px;justify-content:center;flex-wrap:wrap}.marker{width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.45);background:var(--day)}.selectedList{margin-top:12px;background:#fff;border-radius:18px;padding:14px;box-shadow:0 4px 16px rgba(0,0,0,.05)}.selectedItems{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.entry{border:1px solid #ddd;border-radius:14px;padding:10px}.entry b{display:block;margin-bottom:6px}.entry textarea{width:100%;min-height:64px;border:1px solid #ddd;border-radius:10px;padding:9px;font:inherit;resize:vertical}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.summaryGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.summaryCard{background:white;border-radius:18px;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.06)}.bar{height:22px;background:#eee;border-radius:999px;overflow:hidden;margin:8px 0}.bar>span{display:block;height:100%}.redbar{background:var(--red)}.yellowbar{background:#f5b82e}.bluebar{background:var(--blue)}.greenbar{background:var(--green)}.log{background:white;border-radius:18px;padding:14px;margin-top:12px;box-shadow:0 4px 16px rgba(0,0,0,.06)}.logDay{border-top:1px solid #eee;padding:10px 0}.pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:#f1f1f1;padding:5px 9px;margin:3px;font-weight:700}.smallDot{width:10px;height:10px;border-radius:50%;background:var(--day);border:1px solid #555}.footerNote{font-size:13px;color:#666;margin-top:10px}.quadrantLabels{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 6px;min-width:920px}.quadLabel{border-radius:12px;padding:8px 10px;text-align:center;font-weight:900}.topLabels{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;min-width:920px}.bottomLabels{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;min-width:920px}.quadRed{background:#fde5dd;color:#9a1b1b}.quadYellow{background:#fff4b8;color:#7a4b00}.quadBlue{background:#dfeeff;color:#123b79}.quadGreen{background:#e1f4d1;color:#176229}
+.qPill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:6px 10px;margin:3px;font-weight:900;border:1px solid rgba(0,0,0,.12)}
+.qPill.red{background:#fde5dd;color:#9a1b1b}
+.qPill.yellow{background:#fff4b8;color:#7a4b00}
+.qPill.blue{background:#dfeeff;color:#123b79}
+.qPill.green{background:#e1f4d1;color:#176229}
+.eventText{font-weight:800;margin-top:4px;padding:5px 8px;border-radius:10px;background:#fafafa}
+.eventText.red{color:#c62828}
+.eventText.yellow{color:#a86a00}
+.eventText.blue{color:#1565c0}
+.eventText.green{color:#2e7d32}
+.printBtn{background:#111!important}
+
+.emotionEventRow{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;margin:4px 0}
+.inlineEvent{font-weight:800;padding:5px 8px;border-radius:10px;background:#fafafa}
+.inlineEvent.red{color:#c62828}
+.inlineEvent.yellow{color:#a86a00}
+.inlineEvent.blue{color:#1565c0}
+.inlineEvent.green{color:#2e7d32}
+
+.periodHeader{background:white;border-radius:18px;padding:14px 16px;margin:10px 0 12px;text-align:center;font-weight:900;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.periodSub{font-size:13px;color:#666;margin-top:4px;font-weight:600}
+.monthWeekGrid,.yearMonthGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
+.monthWeekCard,.yearMonthCard{background:white;border-radius:18px;padding:14px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+.monthWeekCard h4,.yearMonthCard h4{margin:0 0 8px}
+.miniBars{display:grid;gap:6px}
+.miniBarLine{display:grid;grid-template-columns:52px 1fr 42px;gap:6px;align-items:center;font-size:13px;font-weight:800}
+.miniBar{height:11px;background:#eee;border-radius:999px;overflow:hidden}
+.miniBar span{display:block;height:100%}
+.emptyNotice{background:white;border-radius:18px;padding:16px;text-align:center;color:#666;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+
+.monthSelector{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin:12px 0;
+}
+.monthBox{
+  aspect-ratio:1/1;
+  border:0;
+  border-radius:22px;
+  background:white;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:clamp(20px,4vw,34px);
+  color:#222;
+}
+.monthBox small{
+  display:block;
+  font-size:13px;
+  color:#666;
+  margin-top:8px;
+}
+.monthBox.active{
+  outline:5px solid #111;
+  transform:translateY(-2px);
+}
+.monthDetailTitle{
+  background:white;
+  border-radius:18px;
+  padding:14px 16px;
+  margin:14px 0 12px;
+  text-align:center;
+  font-weight:900;
+  box-shadow:0 4px 16px rgba(0,0,0,.06);
+}
+@media(max-width:760px){
+  .monthSelector{grid-template-columns:repeat(2,1fr)}
+}
+
+.yearSelector{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin:12px 0;
+}
+.yearBox{
+  aspect-ratio:1/1;
+  border:0;
+  border-radius:22px;
+  background:white;
+  box-shadow:0 4px 16px rgba(0,0,0,.08);
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:clamp(20px,4vw,34px);
+  color:#222;
+}
+.yearBox small{
+  display:block;
+  font-size:13px;
+  color:#666;
+  margin-top:8px;
+}
+.yearBox.active{
+  outline:5px solid #111;
+  transform:translateY(-2px);
+}
+@media(max-width:760px){
+  .yearSelector{grid-template-columns:repeat(2,1fr)}
+}
+
+.yearStepScreen{display:none}
+.yearStepScreen.active{display:block}
+.stepBack{
+  border:0;
+  border-radius:999px;
+  padding:10px 16px;
+  font-weight:900;
+  background:#6d4c41;
+  color:white;
+  cursor:pointer;
+  margin:8px 0 12px;
+}
+.stepTitle{
+  background:white;
+  border-radius:18px;
+  padding:14px 16px;
+  margin:10px 0 12px;
+  text-align:center;
+  font-weight:900;
+  box-shadow:0 4px 16px rgba(0,0,0,.06);
+}
+
+.weekClickCard{
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+.weekClickCard:hover{
+  transform:translateY(-2px);
+  box-shadow:0 8px 22px rgba(0,0,0,.12);
+}
+.dayDetailGrid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+  margin-top:12px;
+}
+.dayDetailCard{
+  background:white;
+  border-radius:18px;
+  padding:14px;
+  box-shadow:0 4px 16px rgba(0,0,0,.06);
+}
+.dayDetailCard h4{
+  margin:0 0 8px;
+}
+
+.monthPrintPage{display:none}
+.printTitle{
+  text-align:center;
+  font-weight:900;
+  font-size:18px;
+  margin:0 0 8px;
+}
+body.print-month header,
+body.print-month .tabs,
+body.print-month main > section:not(#monthPrintPage){
+  display:none!important;
+}
+body.print-month #monthPrintPage{
+  display:block!important;
+}
+.printOnly{display:none}
+@media print{
+
+  body.print-month #week{display:none!important}
+  body.print-month #monthPrintPage{
+    display:block!important;
+    width:100%!important;
+    margin:0!important;
+    padding:0!important;
+  }
+  body.print-month #monthPrintPage .summaryGrid{
+    display:grid!important;
+    grid-template-columns:repeat(4,1fr)!important;
+    gap:5px!important;
+    margin:0 0 5px!important;
+  }
+  body.print-month #monthPrintPage .summaryCard{
+    display:block!important;
+    box-shadow:none!important;
+    border:1px solid #ddd!important;
+    border-radius:8px!important;
+    padding:6px 8px!important;
+    font-size:10.5px!important;
+  }
+  body.print-month #monthPrintPage .summaryCard h3{
+    margin:0 0 2px!important;
+    font-size:12px!important;
+  }
+  body.print-month #monthPrintPage .bar{
+    height:12px!important;
+    margin:3px 0 0!important;
+  }
+  body.print-month .monthPrintMeterbox{
+    display:block!important;
+    box-shadow:none!important;
+    border:0!important;
+    padding:0!important;
+    margin:0!important;
+    overflow:visible!important;
+    background:white!important;
+  }
+  body.print-month #monthPrintPage .topLabels,
+  body.print-month #monthPrintPage .bottomLabels{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:4px!important;
+    min-width:0!important;
+    margin:0!important;
+  }
+  body.print-month #monthPrintPage .topLabels{margin-bottom:3px!important}
+  body.print-month #monthPrintPage .bottomLabels{margin-top:3px!important}
+  body.print-month #monthPrintPage .quadLabel{
+    border-radius:7px!important;
+    padding:4px 6px!important;
+    text-align:center!important;
+    font-weight:900!important;
+    font-size:12px!important;
+  }
+  body.print-month #monthPrintMeter.meter{
+    min-width:0!important;
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(10,1fr)!important;
+    grid-template-rows:repeat(10,52px)!important;
+    gap:2px!important;
+  }
+  body.print-month #monthPrintMeter .cell{
+    font-size:10px!important;
+    line-height:1.03!important;
+    padding:1px!important;
+    border-radius:3px!important;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)!important;
+  }
+  body.print-month #monthPrintMeter .cell .en{font-size:7px!important;margin-top:1px!important}
+  body.print-month #monthPrintMeter .markers{bottom:1px!important;left:1px!important;right:1px!important;gap:1px!important}
+  body.print-month #monthPrintMeter .marker{width:10px!important;height:10px!important;border:1px solid rgba(0,0,0,.45)!important}
+  @page{size:A4 landscape;margin:8mm}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  body{background:white;color:#111;margin:0}
+  header,.tabs,#today,.notice,.actions{display:none!important}
+  #week{display:block!important}
+  .wrap{max-width:none!important;width:100%!important;padding:0!important;margin:0!important}
+  #weekRange{display:block!important;text-align:center!important;font-weight:900!important;font-size:14px!important;margin:0 0 4px!important}
+
+  /* 1쪽 상단: 빨강·노랑·파랑·초록 누계 기록 */
+  .summaryGrid{
+    display:grid!important;
+    grid-template-columns:repeat(4,1fr)!important;
+    gap:5px!important;
+    margin:0 0 5px!important;
+    page-break-inside:avoid!important;
+    break-inside:avoid!important;
+  }
+  .summaryCard{
+    display:block!important;
+    box-shadow:none!important;
+    border:1px solid #ddd!important;
+    border-radius:8px!important;
+    padding:6px 8px!important;
+    font-size:10.5px!important;
+    page-break-inside:avoid!important;
+    break-inside:avoid!important;
+  }
+  .summaryCard h3{
+    margin:0 0 2px!important;
+    font-size:12px!important;
+  }
+  .bar{
+    height:12px!important;
+    margin:3px 0 0!important;
+    background:#eee!important;
+    border-radius:999px!important;
+    overflow:hidden!important;
+  }
+
+  /* 1쪽 하단: 무드미터 4분면 기록 */
+  #week .meterbox{
+    display:block!important;
+    box-shadow:none!important;
+    border:0!important;
+    padding:0!important;
+    margin:0!important;
+    overflow:visible!important;
+    background:white!important;
+    margin-bottom:0!important;page-break-after:always!important;
+    break-after:page!important;
+  }
+  #week .topLabels,#week .bottomLabels{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:4px!important;
+    min-width:0!important;
+    margin:0!important;
+  }
+  #week .topLabels{margin-bottom:3px!important}
+  #week .bottomLabels{margin-top:3px!important}
+  #week .quadLabel{
+    border-radius:7px!important;
+    padding:4px 6px!important;
+    text-align:center!important;
+    font-weight:900!important;
+    font-size:12px!important;
+  }
+  #weekMeter.meter{
+    min-width:0!important;
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(10,1fr)!important;
+    grid-template-rows:repeat(10,52px)!important;
+    gap:2px!important;
+  }
+  #weekMeter .cell{
+    font-size:10px!important;
+    line-height:1.03!important;
+    padding:1px!important;
+    border-radius:3px!important;
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.45)!important;
+    page-break-inside:avoid!important;
+    break-inside:avoid!important;
+  }
+  #weekMeter .cell .en{font-size:7px!important;margin-top:1px!important}
+  #weekMeter .markers{bottom:1px!important;left:1px!important;right:1px!important;gap:1px!important}
+  #weekMeter .marker{width:10px!important;height:10px!important;border:1px solid rgba(0,0,0,.45)!important}
+
+  /* 2쪽: 요일별 기록 */
+  .dayLegend{
+    display:flex!important;
+    gap:6px!important;
+    flex-wrap:wrap!important;
+    justify-content:center!important;
+    margin:0 0 8px!important;
+    padding:7px!important;
+    box-shadow:none!important;
+    border:1px solid #ddd!important;
+    border-radius:8px!important;
+    font-size:12px!important;
+  }
+  .dayLegendItem{font-size:11px!important}
+  .dayLegendDot{width:11px!important;height:11px!important}
+  .log{
+    display:block!important;
+    box-shadow:none!important;
+    border:1px solid #ddd!important;
+    border-radius:10px!important;
+    padding:10px!important;
+    margin:0!important;
+    page-break-before:always!important;
+    break-before:page!important;
+  }
+  .log h3{margin:0 0 8px!important;text-align:center!important;font-size:17px!important}
+  .logDay{
+    border-top:1px solid #ddd!important;
+    padding:7px 0!important;
+    page-break-inside:avoid!important;
+    break-inside:avoid!important;
+  }
+  .qPill{font-size:10.5px!important;padding:4px 8px!important;margin:2px!important}
+  .eventText{font-size:10.5px!important;margin-top:3px!important;padding:4px 7px!important}.emotionEventRow{display:flex!important;align-items:flex-start!important;gap:6px!important;flex-wrap:wrap!important;margin:3px 0!important}.inlineEvent{font-size:10.5px!important;padding:4px 7px!important}
+
+  .quadRed{background:#fde5dd!important;color:#9a1b1b!important}
+  .quadYellow{background:#fff4b8!important;color:#7a4b00!important}
+  .quadBlue{background:#dfeeff!important;color:#123b79!important}
+  .quadGreen{background:#e1f4d1!important;color:#176229!important}
+  .redbar{background:var(--red)!important}
+  .yellowbar{background:#f5b82e!important}
+  .bluebar{background:var(--blue)!important}
+  .greenbar{background:var(--green)!important}
+  .cell.red{background:linear-gradient(135deg,#8e1b1b,#f05a28)!important;color:white!important}
+  .cell.yellow{background:linear-gradient(135deg,#f6ea65,#f6a91a)!important;color:#222!important}
+  .cell.blue{background:linear-gradient(135deg,#1a237e,#2da9e9)!important;color:white!important}
+  .cell.green{background:linear-gradient(135deg,#a5d927,#0f8f2f)!important;color:white!important}
+  .printOnly{display:block}
+}
+.dayLegend{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0;background:white;border-radius:16px;padding:12px;box-shadow:0 4px 16px rgba(0,0,0,.05)}
+.dayLegendItem{font-weight:900;display:inline-flex;align-items:center;gap:5px}
+.dayLegendDot{width:13px;height:13px;border-radius:50%;border:1px solid #555;background:var(--day)}
+@media(max-width:760px){.meter{grid-template-columns:repeat(10,78px);grid-template-rows:repeat(10,66px);min-width:810px}.cell{font-size:12px}.cell .en{font-size:9px}.tabs{justify-content:flex-start;overflow-x:auto}.meterbox{padding:10px}.quadrantLabels,.topLabels,.bottomLabels{min-width:810px}}
+
+
+.meterWithSideAxis{
+  display:grid;
+  grid-template-columns:18px minmax(1000px,1fr) 18px;
+  gap:10px;
+  align-items:stretch;
+  min-width:1036px;
+}
+.meterCore{
+  min-width:980px;
+}
+.sideAxis{
+  display:grid;
+  grid-template-rows:1fr 1fr;
+  color:#555;
+  font-weight:800;
+  font-size:inherit;
+}
+.sideAxis span{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  line-height:1.2;
+  white-space:normal;
+}
+@media(max-width:760px){
+  .meterWithSideAxis{
+    grid-template-columns:16px minmax(880px,1fr) 16px;
+    min-width:910px;
+    gap:6px;
+  }
+  .meterCore{min-width:860px}
+  .sideAxis{font-size:10px}
+}
+@media print{
+  #week .meterWithSideAxis,
+  .monthPrintMeterbox .meterWithSideAxis{
+    display:grid!important;
+    grid-template-columns:18px 1fr 18px!important;
+    min-width:0!important;
+    gap:3px!important;
+  }
+  #week .meterCore,
+  .monthPrintMeterbox .meterCore{
+    min-width:0!important;
+  }
+  #week .sideAxis,
+  .monthPrintMeterbox .sideAxis{
+    font-size:10px!important;
+    color:#555!important;
+    font-weight:800!important;
+  }
+}
+
+
+.verticalEnergy{
+  line-height:1.05!important;
+  letter-spacing:0!important;
+  word-break:keep-all;
+}
+
+
+.axisTop{padding:0 10px !important;
+  width:100%;
+}
+.axisTop span:first-child{
+  justify-self:start !important;
+  text-align:left !important;
+}
+.axisTop span:last-child{
+  justify-self:end !important;
+  text-align:right !important;
+}
+
+
+/* 쾌적함 축을 무드미터 실제 시작/끝에 맞춤 */
+.axisTop{padding:0 10px !important;
+  display:grid !important;
+  grid-template-columns:auto 1fr auto !important;
+  align-items:center;
+  width:100% !important;
+  padding:0 !important;
+  margin:0 0 6px 0 !important;
+}
+.axisTop span:first-child{
+  justify-self:start !important;
+  margin-left:0 !important;
+  padding-left:0 !important;
+}
+.axisTop span:last-child{
+  justify-self:end !important;
+  margin-right:0 !important;
+  padding-right:0 !important;
+}
+
+
+.axisTop{padding:0 10px !important;
+  width:100% !important;
+  display:flex !important;
+  justify-content:space-between !important;
+  align-items:center !important;
+  padding:0 !important;
+  margin:0 0 4px 0 !important;
+  box-sizing:border-box !important;
+}
+.axisTop span:first-child{
+  margin-left:-6px !important;
+  padding-left:0 !important;
+}
+.axisTop span:last-child{
+  margin-right:-6px !important;
+  padding-right:0 !important;
+}
+
+
+.axisTop{padding:0 10px !important;
+  display:flex !important;
+  justify-content:space-between !important;
+  align-items:center !important;
+  width:100% !important;
+  max-width:none !important;
+  padding:0 8px !important;
+  margin:0 0 6px 0 !important;
+  box-sizing:border-box !important;
+}
+.axisTop span:first-child{
+  position:relative !important;
+  left:64px !important;   /* 빨강 시작점 쪽으로 이동 */
+}
+.axisTop span:last-child{
+  position:relative !important;
+  right:64px !important;  /* 노랑 끝점 쪽으로 이동 */
+}
+
+
+
+@media print{
+  @page{size:A4 landscape;margin:5mm!important}
+
+  /* 주간 인쇄 첫 장 전체 여백 압축 */
+  #weekRange{
+    font-size:18px!important;
+    margin:0 0 3px!important;
+    line-height:1.1!important;
+  }
+  #week .summaryGrid{
+    gap:4px!important;
+    margin:0 0 4px!important;
+  }
+  #week .summaryCard{
+    padding:4px 6px!important;
+    font-size:9.5px!important;
+    border-radius:6px!important;
+  }
+  #week .summaryCard h3{
+    font-size:11px!important;
+    margin:0 0 1px!important;
+  }
+  #week .bar{
+    height:8px!important;
+    margin:2px 0 0!important;
+  }
+
+  /* 요일 색상 범례는 아주 얇게 유지 */
+  #week .dayLegend{
+    padding:3px 5px!important;
+    margin:0 0 4px!important;
+    gap:5px!important;
+    font-size:9.5px!important;
+    border-radius:6px!important;
+  }
+  #week .dayLegendItem{
+    font-size:9.5px!important;
+  }
+  #week .dayLegendDot{
+    width:8px!important;
+    height:8px!important;
+  }
+
+  /* 무드미터는 작게 축소하지 않고, 페이지 폭에 맞춤 */
+  #week .meterbox{
+    padding:0!important;
+    margin:0!important;
+    box-shadow:none!important;
+    border:0!important;
+    overflow:visible!important;
+    page-break-after:always!important;
+    break-after:page!important;
+  }
+  #week .axisTop{padding:0 10px !important;
+    font-size:10px!important;
+    margin:0 0 2px!important;
+    padding:0 4px!important;
+  }
+  #week .meterWithSideAxis{
+    transform:none!important;
+    zoom:1!important;
+    width:100%!important;
+    min-width:0!important;
+    display:grid!important;
+    grid-template-columns:18px minmax(0,1fr) 18px!important;
+    gap:3px!important;
+    align-items:stretch!important;
+  }
+  #week .meterCore{
+    width:100%!important;
+    min-width:0!important;
+  }
+  #week .sideAxis{
+    font-size:9px!important;
+    color:#555!important;
+    font-weight:800!important;
+  }
+  #week .verticalEnergy{
+    line-height:1.05!important;
+  }
+
+  #week .topLabels,
+  #week .bottomLabels{
+    min-width:0!important;
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:3px!important;
+    margin:0!important;
+  }
+  #week .topLabels{margin-bottom:2px!important}
+  #week .bottomLabels{margin-top:2px!important}
+  #week .quadLabel{
+    padding:3px 5px!important;
+    font-size:10px!important;
+    border-radius:6px!important;
+  }
+
+  #weekMeter.meter{
+    zoom:1!important;
+    min-width:0!important;
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(10,1fr)!important;
+    grid-template-rows:repeat(10,54px)!important;
+    gap:2px!important;
+  }
+  #weekMeter .cell{
+    font-size:10.5px!important;
+    line-height:1.03!important;
+    padding:1px!important;
+    border-radius:3px!important;
+  }
+  #weekMeter .cell .en{
+    font-size:7px!important;
+    margin-top:1px!important;
+  }
+  #weekMeter .markers{
+    bottom:1px!important;
+    left:1px!important;
+    right:1px!important;
+    gap:1px!important;
+  }
+  #weekMeter .marker{
+    width:8px!important;
+    height:8px!important;
+    border:0.8px solid rgba(0,0,0,.45)!important;
+  }
+
+  /* 하단 쾌적함 라벨도 폭 기준으로 맞춤 */
+  #week .meterCore > div[style*="grid-template-columns:1fr 1fr"]{
+    min-width:0!important;
+    width:100%!important;
+    margin-top:2px!important;
+    font-size:10px!important;
+  }
+
+  /* 둘째 장 요일 기록은 기존처럼 분리 */
+  #week .log{
+    page-break-before:always!important;
+    break-before:page!important;
+  }
+}
+
+
+@media print{
+  #week .meterCore > div[style*="grid-template-columns:1fr 1fr"]{
+    margin-top:1px!important;
+    margin-bottom:0!important;
+    line-height:1.05!important;
+    font-size:9.5px!important;
+  }
+  #week .axisTop{padding:0 10px !important;
+    margin-bottom:1px!important;
+    line-height:1.05!important;
+  }
+  #week .topLabels{margin-bottom:1px!important}
+  #week .bottomLabels{margin-top:1px!important}
+  #week .quadLabel{
+    padding:2px 5px!important;
+    line-height:1.05!important;
+  }
+  #week .summaryGrid{
+    margin-bottom:2px!important;
+  }
+  #week .dayLegend{
+    margin-bottom:2px!important;
+  }
+}
+
+
+@media print{
+  /* 주간 인쇄: 누계칸과 무드미터 사이 간격 */
+  #week .topLabels{
+    margin-bottom:6px!important;
+  }
+  #week .bottomLabels{
+    margin-top:6px!important;
+  }
+
+  /* 무드미터를 여백에 맞게 조금 더 크게 */
+  #weekMeter.meter{
+    grid-template-rows:repeat(10,56px)!important;
+    gap:2px!important;
+  }
+  #weekMeter .cell{
+    font-size:10.8px!important;
+    line-height:1.06!important;
+  }
+  #weekMeter .cell .en{
+    font-size:7.2px!important;
+  }
+
+  /* 4분면 설명칸 글자가 길어져도 한 줄 안에서 안정적으로 보이게 */
+  #week .quadLabel{
+    font-size:10.5px!important;
+    padding:4px 5px!important;
+    line-height:1.08!important;
+  }
+
+  /* 하단 쾌적함 라벨은 한 장 안에 들어오도록 조금 압축 */
+  #week .meterCore > div[style*="grid-template-columns:1fr 1fr"]{
+    font-size:9.5px!important;
+    margin-top:2px!important;
+    line-height:1.05!important;
+  }
+}
+
+
+@media print{
+  #week .axisTop{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    width:100%!important;
+    padding:0 0!important;
+    margin-bottom:4px!important;
+  }
+  #week .axisTop span:first-child{
+    text-align:left!important;
+  }
+  #week .axisTop span:last-child{
+    text-align:right!important;
+  }
+}
+
+
+/* FINAL FIX: 주간 누계 위/아래 쾌적함 라벨 간격 완전 동일화 */
+#week .sameComfortAxis{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  width:100%!important;
+  min-width:0!important;
+  color:#555!important;
+  font-weight:800!important;
+  font-size:inherit;
+  box-sizing:border-box!important;
+  padding:0 10px!important;
+  margin:4px 0!important;
+}
+#week .sameComfortAxis > div:first-child{
+  text-align:left!important;
+  justify-self:stretch!important;
+}
+#week .sameComfortAxis > div:last-child{
+  text-align:right!important;
+  justify-self:stretch!important;
+}
+#week .meterCore > .sameComfortAxis:first-child{
+  margin-top:0!important;
+  margin-bottom:6px!important;
+}
+#week .meterCore > .sameComfortAxis:last-child{
+  margin-top:6px!important;
+  margin-bottom:0!important;
+}
+
+@media print{
+  #week .sameComfortAxis{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    width:100%!important;
+    min-width:0!important;
+    padding:0 10px!important;
+    font-size:9.5px!important;
+    line-height:1.05!important;
+    margin:2px 0!important;
+  }
+  #week .meterCore > .sameComfortAxis:first-child{
+    margin-top:0!important;
+    margin-bottom:4px!important;
+  }
+  #week .meterCore > .sameComfortAxis:last-child{
+    margin-top:4px!important;
+    margin-bottom:0!important;
+  }
+}
+
+
+/* FINAL FIX: 오늘 기록 위/아래 쾌적함 라벨도 주간 누계와 동일화 */
+#today .sameComfortAxis{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  width:100%!important;
+  min-width:0!important;
+  color:#555!important;
+  font-weight:800!important;
+  font-size:inherit;
+  box-sizing:border-box!important;
+  padding:0 10px!important;
+  margin:4px 0!important;
+}
+#today .sameComfortAxis > div:first-child{
+  text-align:left!important;
+  justify-self:stretch!important;
+}
+#today .sameComfortAxis > div:last-child{
+  text-align:right!important;
+  justify-self:stretch!important;
+}
+#today .meterCore > .sameComfortAxis:first-child{
+  margin-top:0!important;
+  margin-bottom:6px!important;
+}
+#today .meterCore > .sameComfortAxis:last-child{
+  margin-top:6px!important;
+  margin-bottom:0!important;
+}
+
+
+.weekDetailMeterbox{
+  margin:10px 0 12px;
+}
+.weekDetailMeterbox .meterWithSideAxis{
+  min-width:1036px;
+}
+.weekDetailMeterbox .meterCore{
+  min-width:980px;
+}
+.weekDetailMeterbox .sameComfortAxis{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  width:100%!important;
+  min-width:0!important;
+  color:#555!important;
+  font-weight:800!important;
+  box-sizing:border-box!important;
+  padding:0 10px!important;
+  margin:4px 0!important;
+}
+.weekDetailMeterbox .sameComfortAxis > div:first-child{text-align:left!important}
+.weekDetailMeterbox .sameComfortAxis > div:last-child{text-align:right!important}
+.weekDetailMeterbox .meterCore > .sameComfortAxis:first-child{
+  margin-top:0!important;
+  margin-bottom:6px!important;
+}
+.weekDetailMeterbox .meterCore > .sameComfortAxis:last-child{
+  margin-top:6px!important;
+  margin-bottom:0!important;
+}
+.weekDetailMeterbox .weekMeterTitle{
+  text-align:center;
+  font-weight:900;
+  margin:0 0 8px;
+  color:#333;
+}
+
+</style>
+</head>
+<body>
+<section id="welcomeScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f7f7f2;padding:20px">
+  <div style="width:100%;max-width:420px;background:white;padding:42px 30px;border-radius:24px;box-shadow:0 8px 24px rgba(0,0,0,.08);text-align:center">
+    <div style="font-size:28px;font-weight:900;margin-bottom:24px;color:#222">이름을 적어주세요.</div>
+    <input id="userNameInput" type="text" placeholder="이름 입력" style="width:100%;padding:16px;font-size:22px;text-align:center;border:2px solid #ddd;border-radius:16px;outline:none">
+    <button onclick="startMoodMeter()" style="margin-top:20px;width:100%;padding:16px;font-size:20px;font-weight:900;border:none;border-radius:16px;background:#4CAF50;color:white;cursor:pointer">시작하기</button>
+  </div>
+</section>
+
+<div id="appShell" style="display:none">
+<header><h1 id="mainTitle">MOOD METER 무드 미터</h1><div class="subtitle">오늘 감정 3가지를 4분면에서 선택하고, 일주일 동안 머문 색을 확인합니다.</div></header>
+<div class="tabs"><button class="tab active" data-tab="today">오늘 기록</button><button class="tab" data-tab="week">주간 누계</button><button class="tab" data-tab="month">월간 누계</button><button class="tab" data-tab="year">연간 누계</button></div>
+<main class="wrap">
+<section id="today" class="panel active">
+<div class="guide"><div class="notice"><b>1단계</b> 요일을 고르고, 아래 4분면 무드미터에서 감정 3개를 선택하세요. 선택한 칸에는 요일 색 점이 표시됩니다.</div><div class="days" id="days"></div></div>
+<div class="meterbox"><div class="meterWithSideAxis">
+  <div class="sideAxis">
+    <span class="verticalEnergy">활<br>력<br>높<br>음<br>↑</span>
+    <span class="verticalEnergy">활<br>력<br>낮<br>음<br>↓</span>
+  </div>
+  <div class="meterCore">
+    <div class="comfortAxis sameComfortAxis">
+      <div>← 쾌적함 낮음</div>
+      <div>쾌적함 높음 →</div>
+    </div>
+    <div class="topLabels"><div class="quadLabel quadRed">빨강: 고활력 · 낮은 쾌적함</div><div class="quadLabel quadYellow">노랑: 고활력 · 높은 쾌적함</div></div><div id="meter" class="meter"></div><div class="bottomLabels"><div class="quadLabel quadBlue">파랑: 저활력 · 낮은 쾌적함</div><div class="quadLabel quadGreen">초록: 저활력 · 높은 쾌적함</div></div>
+
+<div class="comfortAxis sameComfortAxis">
+  <div>← 쾌적함 낮음</div>
+  <div>쾌적함 높음 →</div>
+</div>
+
+</div>
+  <div class="sideAxis">
+    <span class="verticalEnergy">활<br>력<br>높<br>음<br>↑</span>
+    <span class="verticalEnergy">활<br>력<br>낮<br>음<br>↓</span>
+  </div>
+</div></div>
+<div class="selectedList"><h3>오늘 선택한 감정과 이벤트</h3><div id="selectedItems" class="selectedItems"></div><div class="actions"><button class="action" onclick="saveDay()">저장하기</button><button class="action" onclick="clearToday()">오늘 선택 초기화</button></div><div class="footerNote">브라우저에 자동 저장됩니다. 같은 기기에서 이어서 볼 수 있습니다.</div></div>
+</section>
+<section id="week" class="panel"><div class="notice"><b>주간 누계</b> 7일 동안 선택한 감정이 빨강·노랑·파랑·초록 중 어디에 많이 머물렀는지 확인합니다.</div><div id="weekRange" style="text-align:center;font-weight:900;margin:10px 0;font-size:18px"></div><div class="actions"><button class="action printBtn" onclick="window.print()">주간 인쇄하기</button></div><div id="dayLegend" class="dayLegend"></div><div id="summary" class="summaryGrid"></div><div class="meterbox" style="margin-top:12px">
+  <div class="meterWithSideAxis">
+    <div class="sideAxis">
+      <span class="verticalEnergy">활<br>력<br>높<br>음<br>↑</span>
+      <span class="verticalEnergy">활<br>력<br>낮<br>음<br>↓</span>
+    </div>
+    <div class="meterCore">
+      <div class="comfortAxis sameComfortAxis">
+        <div>← 쾌적함 낮음</div>
+        <div>쾌적함 높음 →</div>
+      </div>
+      <div class="topLabels">
+        <div class="quadLabel quadRed">빨강: 고활력 · 낮은 쾌적함</div>
+        <div class="quadLabel quadYellow">노랑: 고활력 · 높은 쾌적함</div>
+      </div>
+      <div id="weekMeter" class="meter"></div>
+      <div class="bottomLabels">
+        <div class="quadLabel quadBlue">파랑: 저활력 · 낮은 쾌적함</div>
+        <div class="quadLabel quadGreen">초록: 저활력 · 높은 쾌적함</div>
+      </div>
+      <div class="comfortAxis sameComfortAxis">
+        <div>← 쾌적함 낮음</div>
+        <div>쾌적함 높음 →</div>
+      </div>
+    </div>
+    <div class="sideAxis">
+      <span class="verticalEnergy">활<br>력<br>높<br>음<br>↑</span>
+      <span class="verticalEnergy">활<br>력<br>낮<br>음<br>↓</span>
+    </div>
+  </div>
+</div><div class="log"><h3>요일별 기록</h3><div id="weekLog"></div><div class="actions"><button class="action" onclick="resetAll()">전체 기록 삭제</button></div></div></section>
+
+<section id="month" class="panel">
+  <div id="monthScreenMonths" class="yearStepScreen active">
+    <div id="monthRange" class="periodHeader"></div>
+    <div id="monthSelector" class="monthSelector"></div>
+  </div>
+
+  <div id="monthScreenWeeks" class="yearStepScreen">
+    <button class="stepBack" onclick="showMonthScreen('months')">← 월 선택으로</button>
+    <div id="selectedMonthTitle" class="monthDetailTitle"></div>
+    <div class="actions"><button class="action printBtn" onclick="printSelectedMonth()">월간 인쇄</button></div>
+    <div class="monthWeekGrid" id="monthWeeks"></div>
+  </div>
+
+  <div id="monthScreenDays" class="yearStepScreen">
+    <button class="stepBack" onclick="showMonthScreen('weeks')">← 주간 누계로</button>
+    <div id="selectedMonthWeekTitle" class="monthDetailTitle"></div>
+    <div id="monthWeekMeterBox" class="meterbox weekDetailMeterbox"></div>
+    <div id="monthWeekDays" class="dayDetailGrid"></div>
+  </div>
+</section>
+
+<section id="year" class="panel">
+  <div id="yearScreenYears" class="yearStepScreen active">
+    <div id="yearRange" class="periodHeader"></div>
+    <div id="yearSelector" class="yearSelector"></div>
+  </div>
+
+  <div id="yearScreenMonths" class="yearStepScreen">
+    <button class="stepBack" onclick="showYearScreen('years')">← 연도 선택으로</button>
+    <div id="selectedYearTitle" class="stepTitle"></div>
+    <div id="yearMonthSelector" class="monthSelector"></div>
+  </div>
+
+  <div id="yearScreenWeeks" class="yearStepScreen">
+    <button class="stepBack" onclick="showYearScreen('months')">← 월 선택으로</button>
+    <div id="selectedYearMonthTitle" class="stepTitle"></div>
+    <div class="actions"><button class="action printBtn" onclick="printSelectedYearMonth()">월간 인쇄</button></div>
+    <div class="monthWeekGrid" id="yearMonthWeeks"></div>
+  </div>
+
+  <div id="yearScreenDays" class="yearStepScreen">
+    <button class="stepBack" onclick="showYearScreen('weeks')">← 주간 누계로</button>
+    <div id="selectedYearWeekTitle" class="stepTitle"></div>
+    <div id="yearWeekMeterBox" class="meterbox weekDetailMeterbox"></div>
+    <div id="yearWeekDays" class="dayDetailGrid"></div>
+  </div>
+</section>
+
+<section id="monthPrintPage" class="monthPrintPage">
+  <div id="monthPrintRange" class="printTitle"></div>
+  <div id="monthPrintSummary" class="summaryGrid"></div>
+  <div class="meterbox monthPrintMeterbox">
+    <div class="topLabels">
+      <div class="quadLabel quadRed">빨강 월간 누계</div>
+      <div class="quadLabel quadYellow">노랑 월간 누계</div>
+    </div>
+    <div id="monthPrintMeter" class="meter"></div>
+    <div class="bottomLabels">
+      <div class="quadLabel quadBlue">파랑 월간 누계</div>
+      <div class="quadLabel quadGreen">초록 월간 누계</div>
+    </div>
+  </div>
+</section>
+</main>
+<script>
+const dayInfo=[['mon','월','#8e44ad','monday'],['tue','화','#ff69b4','tuesday'],['wed','수','#2c3e50','wednesday'],['thu','목','#ecf0f1','thursday'],['fri','금','#1abc9c','friday'],['sat','토','#8d6e63','saturday'],['sun','일','#95a5a6','sunday']];
+const red=[['격분한','Enraged'],['공황에 빠진','Panicked'],['스트레스 받는','Stressed'],['초조한','Jittery'],['충격받은','Shocked'],['격노한','Livid'],['몹시 화가 난','Furious'],['좌절한','Frustrated'],['신경이 날카로운','Tense'],['망연자실한','Stunned'],['화가 치밀어 오른','Fuming'],['겁먹은','Frightened'],['화난','Angry'],['초조한','Nervous'],['안절부절못하는','Restless'],['불안한','Anxious'],['우려하는','Apprehensive'],['근심하는','Worried'],['짜증나는','Irritated'],['거슬리는','Annoyed'],['불쾌한','Repulsed'],['골치 아픈','Troubled'],['염려하는','Concerned'],['마음이 불편한','Uneasy'],['언짢은','Peeved']];
+const yellow=[['놀란','Surprised'],['긍정적인','Upbeat'],['흥겨운','Festive'],['아주 신나는','Exhilarated'],['황홀한','Ecstatic'],['들뜬','Hyper'],['쾌활한','Cheerful'],['동기 부여된','Motivated'],['영감을 받은','Inspired'],['의기양양한','Elated'],['기운이 넘치는','Energized'],['활발한','Lively'],['흥분한','Excited'],['낙관적인','Optimistic'],['열광하는','Enthusiastic'],['만족스러운','Pleased'],['집중하는','Focused'],['행복한','Happy'],['자랑스러운','Proud'],['짜릿한','Thrilled'],['유쾌한','Pleasant'],['기쁜','Joyful'],['희망찬','Hopeful'],['재미있는','Playful'],['더없이 행복한','Blissful']];
+const blue=[['역겨운','Disgusted'],['침울한','Glum'],['실망스러운','Disappointed'],['의욕 없는','Down'],['냉담한','Apathetic'],['비관적인','Pessimistic'],['시무룩한','Morose'],['낙담한','Discouraged'],['슬픈','Sad'],['지루한','Bored'],['소외된','Alienated'],['비참한','Miserable'],['쓸쓸한','Lonely'],['기죽은','Disheartened'],['피곤한','Tired'],['의기소침한','Despondent'],['우울한','Depressed'],['뚱한','Sullen'],['기진맥진한','Exhausted'],['지친','Fatigued'],['절망한','Despairing'],['가망 없는','Hopeless'],['고독한','Desolate'],['소모된','Spent'],['진이 빠진','Drained']];
+const green=[['속 편한','At Ease'],['태평한','Easygoing'],['자족하는','Content'],['다정한','Loving'],['충만한','Fulfilled'],['평온한','Calm'],['안전한','Secure'],['만족스러운','Satisfied'],['감사하는','Grateful'],['감동적인','Touched'],['여유로운','Relaxed'],['차분한','Chill'],['편안한','Restful'],['축복받은','Blessed'],['안정적인','Balanced'],['한가로운','Mellow'],['생각에 잠긴','Thoughtful'],['평화로운','Peaceful'],['편한','Comfortable'],['근심 걱정 없는','Carefree'],['나른한','Sleepy'],['흐뭇한','Complacent'],['고요한','Tranquil'],['안락한','Cozy'],['안온한','Serene']];
+let currentDay='mon'; let data=JSON.parse(localStorage.getItem('moodWeekV2')||'{}'); dayInfo.forEach(d=>{if(!data[d[0]])data[d[0]]=[]});
+function allCells(){let rows=[]; for(let r=0;r<5;r++){for(let c=0;c<5;c++)rows.push({q:'red',...obj(red[r*5+c])}); for(let c=0;c<5;c++)rows.push({q:'yellow',...obj(yellow[r*5+c])});} for(let r=0;r<5;r++){for(let c=0;c<5;c++)rows.push({q:'blue',...obj(blue[r*5+c])}); for(let c=0;c<5;c++)rows.push({q:'green',...obj(green[r*5+c])});} return rows.map((x,i)=>({...x,id:x.q+'-'+i}));} function obj(a){return{ko:a[0],en:a[1]}}
+const cells=allCells();
+function renderDays(){days.innerHTML=dayInfo.map(d=>`<button class="daybtn ${d[3]} ${currentDay===d[0]?'active':''}" style="--day:${d[2]}" onclick="setDay('${d[0]}')"><span class="dot"></span>${d[1]}</button>`).join('')}
+function setDay(d){currentDay=d;renderDays();renderMeter();renderSelected();}
+function renderMeter(target='meter',week=false){const el=document.getElementById(target);el.innerHTML=cells.map(cell=>{const selected=data[currentDay].some(x=>x.id===cell.id);let marks=''; if(week){dayInfo.forEach(d=>{if(data[d[0]].some(x=>x.id===cell.id))marks+=`<span class="marker" style="--day:${d[2]}"></span>`})} else if(selected){marks=`<span class="marker" style="--day:${dayInfo.find(d=>d[0]===currentDay)[2]}"></span>`} return `<button class="cell ${cell.q} ${selected&&!week?'selected':''}" onclick="toggleCell('${cell.id}')"><span>${cell.ko}</span><span class="en">${cell.en}</span><span class="markers">${marks}</span></button>`}).join('')}
+function toggleCell(id){let arr=data[currentDay]; const idx=arr.findIndex(x=>x.id===id); if(idx>=0)arr.splice(idx,1); else{ if(arr.length>=3){alert('하루에 감정은 3개까지 선택할 수 있어요.');return;} const cell=cells.find(x=>x.id===id); arr.push({...cell,event:''}); } save();renderMeter();renderSelected();}
+function renderSelected(){selectedItems.innerHTML=data[currentDay].length?data[currentDay].map((x,i)=>`<div class="entry"><b>${i+1}. ${x.ko} <small>${x.en}</small></b><textarea placeholder="이 감정과 연결된 오늘의 사건을 간단히 적어보세요." oninput="updateEvent('${x.id}',this.value)">${x.event||''}</textarea></div>`).join(''):'<div class="footerNote">아직 선택한 감정이 없습니다. 위 무드미터에서 3가지를 선택하세요.</div>'}
+function updateEvent(id,val){const item=data[currentDay].find(x=>x.id===id); if(item)item.event=val; save();}
+function save(){localStorage.setItem('moodWeekV2',JSON.stringify(data))} function saveDay(){save();alert('저장되었습니다.')} function clearToday(){if(confirm('오늘 선택을 지울까요?')){data[currentDay]=[];save();renderMeter();renderSelected();}}
+function resetAll(){if(confirm('일주일 전체 기록을 삭제할까요?')){dayInfo.forEach(d=>data[d[0]]=[]);save();renderAll();}}
+function renderSummary(){let counts={red:0,yellow:0,blue:0,green:0};let total=0;dayInfo.forEach(d=>data[d[0]].forEach(x=>{counts[x.q]++;total++;})); const names={red:'빨강',yellow:'노랑',blue:'파랑',green:'초록'}; const cls={red:'redbar',yellow:'yellowbar',blue:'bluebar',green:'greenbar'}; summary.innerHTML=['red','yellow','blue','green'].map(q=>{const pct=total?Math.round(counts[q]/total*100):0;return `<div class="summaryCard"><h3>${names[q]}</h3><div><b>${counts[q]}회</b> / ${total}회 (${pct}%)</div><div class="bar"><span class="${cls[q]}" style="width:${pct}%"></span></div></div>`}).join('')}
+function qName(q){return {red:'빨강',yellow:'노랑',blue:'파랑',green:'초록'}[q]||q}
+function getWeekDates(){
+ const now=new Date();
+ const day=now.getDay();
+ const diff=(day===0?-6:1-day);
+ const mon=new Date(now); mon.setDate(now.getDate()+diff);
+ const dates=[];
+ for(let i=0;i<7;i++){
+   const d=new Date(mon);
+   d.setDate(mon.getDate()+i);
+   dates.push(d);
+ }
+ return dates;
+}
+function fmtDate(d){return `${d.getMonth()+1}/${d.getDate()}`}
+
+function renderDayLegend(){
+const dates=getWeekDates();
+dayLegend.innerHTML=dayInfo.map((d,i)=>`<span class="dayLegendItem"><span class="dayLegendDot" style="--day:${d[2]}"></span>${d[1]} ${fmtDate(dates[i])}</span>`).join('');
+weekRange.innerHTML=`주간 기록 (${fmtDate(dates[0])} 월요일 ~ ${fmtDate(dates[6])} 일요일)`;
+}
+function renderWeekLog(){weekLog.innerHTML=dayInfo.map(d=>{const arr=data[d[0]];return `<div class="logDay"><b><span class="smallDot" style="--day:${d[2]}"></span> ${d[1]}요일 (${fmtDate(getWeekDates()[dayInfo.findIndex(x=>x[0]===d[0])])})</b><div>${arr.length?arr.map(x=>`<div class="emotionEventRow"><span class="qPill ${x.q}">${qName(x.q)} · ${x.ko}</span>${x.event?`<span class="inlineEvent ${x.q}">${x.event}</span>`:`<span class="inlineEvent ${x.q}">이벤트 기록 없음</span>`}</div>`).join(''):'기록 없음'}</div></div>`}).join('')}
+function renderAll(){renderDays();renderMeter();renderSelected();renderSummary();renderDayLegend();renderMeter('weekMeter',true);renderWeekLog();}
+
+function pad2(n){return String(n).padStart(2,'0')}
+function keyDate(d){return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`}
+function currentWeekDateKey(dayKey){
+  const dates=getWeekDates();
+  const idx=dayInfo.findIndex(d=>d[0]===dayKey);
+  return keyDate(dates[idx]);
+}
+
+let datedData=JSON.parse(localStorage.getItem('moodDatedV1')||'{}');
+
+function migrateOldWeekData(){
+  let changed=false;
+  dayInfo.forEach(d=>{
+    const arr=data[d[0]]||[];
+    if(arr.length){
+      const dk=currentWeekDateKey(d[0]);
+      if(!datedData[dk] || !datedData[dk].length){
+        datedData[dk]=arr;
+        changed=true;
+      }
+    }
+  });
+  if(changed)localStorage.setItem('moodDatedV1',JSON.stringify(datedData));
+}
+
+function saveDatedCurrent(){
+  datedData[currentWeekDateKey(currentDay)]=data[currentDay]||[];
+  localStorage.setItem('moodDatedV1',JSON.stringify(datedData));
+}
+
+const baseSave=save;
+save=function(){
+  localStorage.setItem('moodWeekV2',JSON.stringify(data));
+  saveDatedCurrent();
+}
+
+const baseSetDay=setDay;
+setDay=function(d){
+  currentDay=d;
+  const dk=currentWeekDateKey(currentDay);
+  if(datedData[dk]) data[currentDay]=datedData[dk];
+  renderDays();renderMeter();renderSelected();
+}
+
+function dateFromKey(k){return new Date(k+'T00:00:00')}
+function getRecordsBetween(start,end){
+  const result=[];
+  Object.keys(datedData).sort().forEach(k=>{
+    const d=dateFromKey(k);
+    if(d>=start && d<=end){
+      (datedData[k]||[]).forEach(x=>result.push({...x,date:k}));
+    }
+  });
+  return result;
+}
+
+function countRecords(records){
+  const counts={red:0,yellow:0,blue:0,green:0};
+  records.forEach(x=>{if(counts[x.q]!==undefined)counts[x.q]++});
+  return counts;
+}
+
+function renderSummaryInto(elId,records){
+  const el=document.getElementById(elId);
+  if(!el)return;
+  const counts=countRecords(records);
+  const total=records.length;
+  const names={red:'빨강',yellow:'노랑',blue:'파랑',green:'초록'};
+  const cls={red:'redbar',yellow:'yellowbar',blue:'bluebar',green:'greenbar'};
+  el.innerHTML=['red','yellow','blue','green'].map(q=>{
+    const pct=total?Math.round(counts[q]/total*100):0;
+    return `<div class="summaryCard"><h3>${names[q]}</h3><div><b>${counts[q]}회</b> / ${total}회 (${pct}%)</div><div class="bar"><span class="${cls[q]}" style="width:${pct}%"></span></div></div>`;
+  }).join('');
+}
+
+function miniBars(records){
+  const counts=countRecords(records);
+  const total=records.length;
+  const names={red:'빨강',yellow:'노랑',blue:'파랑',green:'초록'};
+  const cls={red:'redbar',yellow:'yellowbar',blue:'bluebar',green:'greenbar'};
+  if(!total)return '<div class="footerNote">기록 없음</div>';
+  return `<div class="miniBars">${['red','yellow','blue','green'].map(q=>{
+    const pct=total?Math.round(counts[q]/total*100):0;
+    return `<div class="miniBarLine"><span>${names[q]}</span><div class="miniBar"><span class="${cls[q]}" style="width:${pct}%"></span></div><span>${pct}%</span></div>`;
+  }).join('')}</div>`;
+}
+
+function formatFullDate(d){return `${d.getFullYear()}년 ${d.getMonth()+1}월 ${d.getDate()}일`}
+
+
+let selectedMonthWeek=null;
+let selectedYearWeek=null;
+
+function getDayNameFromDate(date){
+  return ['일','월','화','수','목','금','토'][date.getDay()];
+}
+function dayKeyFromDate(date){
+  return ['sun','mon','tue','wed','thu','fri','sat'][date.getDay()];
+}
+function dayColorFromDate(date){
+  const key=dayKeyFromDate(date);
+  const found=dayInfo.find(d=>d[0]===key);
+  return found?found[2]:'#999';
+}
+
+function renderRangeMoodMeter(boxId,wStart,wEnd,titleText){
+  const box=document.getElementById(boxId);
+  if(!box)return;
+
+  const dates=[];
+  let cur=new Date(wStart);
+  while(cur<=wEnd){
+    dates.push(new Date(cur));
+    cur.setDate(cur.getDate()+1);
+  }
+
+  const meterId=boxId+'Meter';
+  const title=`<div class="weekMeterTitle">${titleText} 무드미터 체크 기록</div>`;
+
+  box.innerHTML=`${title}
+    <div class="meterWithSideAxis">
+      <div class="sideAxis">
+        <span class="verticalEnergy">활<br>력<br>높<br>음<br>↑</span>
+        <span class="verticalEnergy">활<br>력<br>낮<br>음<br>↓</span>
+      </div>
+      <div class="meterCore">
+        <div class="comfortAxis sameComfortAxis">
+          <div>← 쾌적함 낮음</div>
+          <div>쾌적함 높음 →</div>
+        </div>
+        <div class="topLabels">
+          <div class="quadLabel quadRed">빨강: 고활력 · 낮은 쾌적함</div>
+          <div class="quadLabel quadYellow">노랑: 고활력 · 높은 쾌적함</div>
+        </div>
+        <div id="${meterId}" class="meter"></div>
+        <div class="bottomLabels">
+          <div class="quadLabel quadBlue">파랑: 저활력 · 낮은 쾌적함</div>
+          <div class="quadLabel quadGreen">초록: 저활력 · 높은 쾌적함</div>
+        </div>
+        <div class="comfortAxis sameComfortAxis">
+          <div>← 쾌적함 낮음</div>
+          <div>쾌적함 높음 →</div>
+        </div>
+      </div>
+      <div class="sideAxis">
+        <span class="verticalEnergy">활<br>력<br>높<br>음<br>↑</span>
+        <span class="verticalEnergy">활<br>력<br>낮<br>음<br>↓</span>
+      </div>
+    </div>`;
+
+  const el=document.getElementById(meterId);
+  el.innerHTML=cells.map(cell=>{
+    let marks='';
+    dates.forEach(dt=>{
+      const key=keyDate(dt);
+      const arr=datedData[key]||[];
+      if(arr.some(x=>x.id===cell.id)){
+        marks+=`<span class="marker" style="--day:${dayColorFromDate(dt)}"></span>`;
+      }
+    });
+    return `<button class="cell ${cell.q}"><span>${cell.ko}</span><span class="en">${cell.en}</span><span class="markers">${marks}</span></button>`;
+  }).join('');
+}
+
+
+function renderWeekDaysInto(elId,titleId,wStart,wEnd,titleText){
+  const title=document.getElementById(titleId);
+  const box=document.getElementById(elId);
+  if(!title || !box)return;
+  title.innerHTML=`${titleText}<div class="periodSub">${fmtDate(wStart)} ~ ${fmtDate(wEnd)}</div>`;
+  if(elId==='monthWeekDays')renderRangeMoodMeter('monthWeekMeterBox',wStart,wEnd,titleText);
+  if(elId==='yearWeekDays')renderRangeMoodMeter('yearWeekMeterBox',wStart,wEnd,titleText);
+
+  const days=[];
+  let cur=new Date(wStart);
+  while(cur<=wEnd){
+    const key=keyDate(cur);
+    const arr=datedData[key]||[];
+    days.push({date:new Date(cur),key,arr});
+    cur.setDate(cur.getDate()+1);
+  }
+  box.innerHTML=days.map(d=>{
+    const color=dayColorFromDate(d.date);
+    const dateLabel=`${fmtDate(d.date)} ${getDayNameFromDate(d.date)}요일`;
+    const rows=d.arr.length
+      ? d.arr.map(x=>`<div class="emotionEventRow"><span class="qPill ${x.q}">${qName(x.q)} · ${x.ko}</span>${x.event?`<span class="inlineEvent ${x.q}">${x.event}</span>`:`<span class="inlineEvent ${x.q}">이벤트 기록 없음</span>`}</div>`).join('')
+      : '<div class="footerNote">기록 없음</div>';
+    return `<div class="dayDetailCard"><h4><span class="smallDot" style="--day:${color}"></span> ${dateLabel}</h4>${rows}</div>`;
+  }).join('');
+}
+let selectedMonthIndex=new Date().getMonth();
+let currentMonthStep='months';
+
+function showMonthScreen(step){
+  currentMonthStep=step;
+  ['months','weeks','days'].forEach(s=>{
+    const el=document.getElementById('monthScreen'+s.charAt(0).toUpperCase()+s.slice(1));
+    if(el)el.classList.toggle('active',s===step);
+  });
+}
+
+function renderMonthSelector(){
+  const now=new Date();
+  const year=now.getFullYear();
+  const selector=document.getElementById('monthSelector');
+  if(!selector)return;
+  selector.innerHTML=Array.from({length:12},(_,i)=>{
+    const start=new Date(year,i,1);
+    const end=new Date(year,i+1,0);
+    const records=getRecordsBetween(start,end);
+    return `<button class="monthBox ${selectedMonthIndex===i?'active':''}" onclick="selectMonth(${i})">${i+1}월<small>${records.length}회 기록</small></button>`;
+  }).join('');
+}
+
+function selectMonth(i){
+  selectedMonthIndex=i;
+  renderSelectedMonthWeeks();
+  showMonthScreen('weeks');
+}
+
+function renderSelectedMonthWeeks(){
+  const now=new Date();
+  const year=now.getFullYear();
+  const start=new Date(year,selectedMonthIndex,1);
+  const end=new Date(year,selectedMonthIndex+1,0);
+  const records=getRecordsBetween(start,end);
+
+  const title=document.getElementById('selectedMonthTitle');
+  title.innerHTML=`${year}년 ${selectedMonthIndex+1}월 주별 주간 누계 기록<div class="periodSub">${formatFullDate(start)} ~ ${formatFullDate(end)} · 총 ${records.length}회 기록</div>`;
+
+  const weeks=[];
+  let cur=new Date(start);
+  let weekNo=1;
+  while(cur<=end){
+    const wStart=new Date(cur);
+    const wEnd=new Date(cur);
+    wEnd.setDate(wStart.getDate()+6);
+    if(wEnd>end)wEnd.setTime(end.getTime());
+    weeks.push({weekNo,start:wStart,end:wEnd,records:getRecordsBetween(wStart,wEnd)});
+    cur.setDate(cur.getDate()+7);
+    weekNo++;
+  }
+
+  monthWeeks.innerHTML=weeks.map((w,idx)=>{
+    const total=w.records.length;
+    return `<button class="monthWeekCard weekClickCard" onclick="selectMonthWeek(${idx})"><h4>${selectedMonthIndex+1}월 ${w.weekNo}주차 주간 누계</h4><div class="footerNote">${fmtDate(w.start)} ~ ${fmtDate(w.end)} · 총 ${total}회 기록</div>${miniBars(w.records)}</button>`;
+  }).join('');
+  selectedMonthWeek=weeks;
+}
+
+function selectMonthWeek(idx){
+  if(!selectedMonthWeek || !selectedMonthWeek[idx])return;
+  const w=selectedMonthWeek[idx];
+  renderWeekDaysInto('monthWeekDays','selectedMonthWeekTitle',w.start,w.end,`${selectedMonthIndex+1}월 ${w.weekNo}주차 요일별 기록`);
+  showMonthScreen('days');
+}
+
+
+function renderMonth(){
+  const now=new Date();
+  const range=document.getElementById('monthRange');
+  range.innerHTML=`${now.getFullYear()}년 월간 누계 기록<div class="periodSub">월을 선택하면 해당 월의 주간 누계 기록 화면으로 이동합니다.</div>`;
+  renderMonthSelector();
+  if(currentMonthStep==='weeks'||currentMonthStep==='days')renderSelectedMonthWeeks();
+  showMonthScreen(currentMonthStep);
+}
+
+
+let selectedYearValue=new Date().getFullYear();
+let selectedYearMonthIndex=new Date().getMonth();
+let currentYearStep='years';
+
+function showYearScreen(step){
+  currentYearStep=step;
+  ['years','months','weeks','days'].forEach(s=>{
+    const el=document.getElementById('yearScreen'+s.charAt(0).toUpperCase()+s.slice(1));
+    if(el)el.classList.toggle('active',s===step);
+  });
+}
+
+function getAvailableYears(){
+  const years=new Set([new Date().getFullYear()]);
+  Object.keys(datedData).forEach(k=>{
+    const y=parseInt(k.slice(0,4),10);
+    if(!Number.isNaN(y)) years.add(y);
+  });
+  return Array.from(years).sort((a,b)=>a-b);
+}
+
+function renderYearSelector(){
+  const selector=document.getElementById('yearSelector');
+  if(!selector)return;
+  const years=getAvailableYears();
+  selector.innerHTML=years.map(y=>{
+    const start=new Date(y,0,1);
+    const end=new Date(y,11,31);
+    const records=getRecordsBetween(start,end);
+    return `<button class="yearBox ${selectedYearValue===y?'active':''}" onclick="selectYear(${y})">${y}년<small>${records.length}회 기록</small></button>`;
+  }).join('');
+}
+
+function selectYear(y){
+  selectedYearValue=y;
+  selectedYearMonthIndex=0;
+  currentYearStep='months';
+  renderYearMonthScreen();
+  showYearScreen('months');
+}
+
+function renderYearMonthScreen(){
+  const year=selectedYearValue;
+  const start=new Date(year,0,1);
+  const end=new Date(year,11,31);
+  const records=getRecordsBetween(start,end);
+
+  const title=document.getElementById('selectedYearTitle');
+  title.innerHTML=`${year}년 월 선택<div class="periodSub">${formatFullDate(start)} ~ ${formatFullDate(end)} · 총 ${records.length}회 기록</div>`;
+
+  const selector=document.getElementById('yearMonthSelector');
+  selector.innerHTML=Array.from({length:12},(_,i)=>{
+    const mStart=new Date(year,i,1);
+    const mEnd=new Date(year,i+1,0);
+    const monthRecords=getRecordsBetween(mStart,mEnd);
+    return `<button class="monthBox ${selectedYearMonthIndex===i?'active':''}" onclick="selectYearMonth(${i})">${i+1}월<small>${monthRecords.length}회 기록</small></button>`;
+  }).join('');
+}
+
+function selectYearMonth(i){
+  selectedYearMonthIndex=i;
+  currentYearStep='weeks';
+  renderSelectedYearMonthWeeks();
+  showYearScreen('weeks');
+}
+
+function renderSelectedYearMonthWeeks(){
+  const start=new Date(selectedYearValue,selectedYearMonthIndex,1);
+  const end=new Date(selectedYearValue,selectedYearMonthIndex+1,0);
+  const records=getRecordsBetween(start,end);
+
+  const title=document.getElementById('selectedYearMonthTitle');
+  title.innerHTML=`${selectedYearValue}년 ${selectedYearMonthIndex+1}월 주간 누계<div class="periodSub">${formatFullDate(start)} ~ ${formatFullDate(end)} · 총 ${records.length}회 기록</div>`;
+
+  const weeks=[];
+  let cur=new Date(start);
+  let weekNo=1;
+  while(cur<=end){
+    const wStart=new Date(cur);
+    const wEnd=new Date(cur);
+    wEnd.setDate(wStart.getDate()+6);
+    if(wEnd>end)wEnd.setTime(end.getTime());
+    weeks.push({weekNo,start:wStart,end:wEnd,records:getRecordsBetween(wStart,wEnd)});
+    cur.setDate(cur.getDate()+7);
+    weekNo++;
+  }
+  selectedYearWeek=weeks;
+
+  yearMonthWeeks.innerHTML=weeks.map((w,idx)=>{
+    const total=w.records.length;
+    return `<button class="monthWeekCard weekClickCard" onclick="selectYearWeek(${idx})"><h4>${selectedYearMonthIndex+1}월 ${w.weekNo}주차 주간 누계</h4><div class="footerNote">${fmtDate(w.start)} ~ ${fmtDate(w.end)} · 총 ${total}회 기록</div>${miniBars(w.records)}</button>`;
+  }).join('');
+}
+
+function selectYearWeek(idx){
+  if(!selectedYearWeek || !selectedYearWeek[idx])return;
+  const w=selectedYearWeek[idx];
+  currentYearStep='days';
+  renderWeekDaysInto('yearWeekDays','selectedYearWeekTitle',w.start,w.end,`${selectedYearValue}년 ${selectedYearMonthIndex+1}월 ${w.weekNo}주차 요일별 기록`);
+  showYearScreen('days');
+}
+
+function renderYear(){
+  const range=document.getElementById('yearRange');
+  range.innerHTML=`연간 누계 기록<div class="periodSub">연도 선택 → 월 선택 → 주간 누계 → 요일별 기록 순서로 확인합니다.</div>`;
+  renderYearSelector();
+
+  if(currentYearStep==='months')renderYearMonthScreen();
+  if(currentYearStep==='weeks')renderSelectedYearMonthWeeks();
+  if(currentYearStep==='days'){
+    renderSelectedYearMonthWeeks();
+    showYearScreen('days');
+    return;
+  }
+  showYearScreen(currentYearStep);
+}
+
+
+function getDatesBetween(start,end){
+  const arr=[];
+  let cur=new Date(start);
+  while(cur<=end){
+    arr.push(new Date(cur));
+    cur.setDate(cur.getDate()+1);
+  }
+  return arr;
+}
+
+function renderMonthPrintMeter(year,monthIndex){
+  const start=new Date(year,monthIndex,1);
+  const end=new Date(year,monthIndex+1,0);
+  const records=getRecordsBetween(start,end);
+
+  const title=document.getElementById('monthPrintRange');
+  title.innerHTML=`${year}년 ${monthIndex+1}월 월간 무드미터 기록`;
+
+  renderSummaryInto('monthPrintSummary',records);
+
+  const dates=getDatesBetween(start,end);
+  const el=document.getElementById('monthPrintMeter');
+  el.innerHTML=cells.map(cell=>{
+    let marks='';
+    dates.forEach(dt=>{
+      const key=keyDate(dt);
+      const arr=datedData[key]||[];
+      if(arr.some(x=>x.id===cell.id)){
+        marks+=`<span class="marker" style="--day:${dayColorFromDate(dt)}"></span>`;
+      }
+    });
+    return `<button class="cell ${cell.q}"><span>${cell.ko}</span><span class="en">${cell.en}</span><span class="markers">${marks}</span></button>`;
+  }).join('');
+}
+
+function printMonthByYearMonth(year,monthIndex){
+  renderMonthPrintMeter(year,monthIndex);
+  document.body.classList.add('print-month');
+  setTimeout(()=>{
+    window.print();
+    setTimeout(()=>document.body.classList.remove('print-month'),300);
+  },100);
+}
+
+function printSelectedMonth(){
+  const year=new Date().getFullYear();
+  printMonthByYearMonth(year,selectedMonthIndex);
+}
+
+function printSelectedYearMonth(){
+  printMonthByYearMonth(selectedYearValue,selectedYearMonthIndex);
+}
+
+
+function getTodayKey(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+let currentDateWatcher=getTodayKey();
+
+setInterval(()=>{
+  const nowKey=getTodayKey();
+  if(nowKey!==currentDateWatcher){
+    currentDateWatcher=nowKey;
+
+    // 현재 주의 날짜 다시 계산
+    if(typeof renderDayLegend==='function') renderDayLegend();
+
+    // 오늘 날짜에 해당하는 요일 자동 선택
+    const now=new Date();
+    const dayMap=['sun','mon','tue','wed','thu','fri','sat'];
+    const todayDay=dayMap[now.getDay()];
+
+    if(typeof setDay==='function'){
+      setDay(todayDay);
+    }
+
+    if(typeof renderAll==='function'){
+      renderAll();
+    }
+  }
+},60000);
+
+const baseRenderAll=renderAll;
+renderAll=function(){
+  baseRenderAll();
+  migrateOldWeekData();
+  renderMonth();
+  renderYear();
+}
+migrateOldWeekData();
+document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById(btn.dataset.tab).classList.add('active');renderAll();}));
+renderAll();
+
+
+function startMoodMeter(){
+  const input=document.getElementById('userNameInput');
+  const name=input.value.trim();
+  if(!name){
+    alert('이름을 입력해주세요.');
+    input.focus();
+    return;
+  }
+  localStorage.setItem('moodUserName',name);
+  document.getElementById('welcomeScreen').style.display='none';
+  document.getElementById('appShell').style.display='block';
+  const title=document.getElementById('mainTitle');
+  if(title) title.textContent=name+'의 무드미터';
+  if(typeof renderAll==='function') renderAll();
+}
+
+window.addEventListener('load',()=>{
+  const savedName=localStorage.getItem('moodUserName')||'';
+  const input=document.getElementById('userNameInput');
+  if(input) input.value=savedName;
+
+  // 앱 실행 첫 화면은 항상 이름 입력 화면만 보이게 함
+  const welcome=document.getElementById('welcomeScreen');
+  const app=document.getElementById('appShell');
+  if(welcome) welcome.style.display='flex';
+  if(app) app.style.display='none';
+
+  if(input){
+    setTimeout(()=>input.focus(),100);
+    input.addEventListener('keydown',(e)=>{
+      if(e.key==='Enter') startMoodMeter();
+    });
+  }
+});
+
+</script>
+</div>
+</body>
+<!-- source: uploaded file modified -->
+</html>
