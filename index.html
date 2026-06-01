@@ -878,6 +878,83 @@ body.print-month #monthPrintPage{
   color:#333;
 }
 
+
+/* 월간 인쇄 무드미터를 주간 누계 무드미터와 같은 구조로 표시 */
+.monthPrintMeterbox .sameComfortAxis{
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  width:100%!important;
+  min-width:0!important;
+  color:#555!important;
+  font-weight:800!important;
+  box-sizing:border-box!important;
+  padding:0 10px!important;
+  margin:4px 0!important;
+}
+.monthPrintMeterbox .sameComfortAxis > div:first-child{text-align:left!important}
+.monthPrintMeterbox .sameComfortAxis > div:last-child{text-align:right!important}
+.monthPrintMeterbox .meterCore > .sameComfortAxis:first-child{
+  margin-top:0!important;
+  margin-bottom:6px!important;
+}
+.monthPrintMeterbox .meterCore > .sameComfortAxis:last-child{
+  margin-top:6px!important;
+  margin-bottom:0!important;
+}
+
+@media print{
+  body.print-month .monthPrintMeterbox .meterWithSideAxis{
+    display:grid!important;
+    grid-template-columns:18px minmax(0,1fr) 18px!important;
+    gap:3px!important;
+    width:100%!important;
+    min-width:0!important;
+    align-items:stretch!important;
+  }
+  body.print-month .monthPrintMeterbox .meterCore{
+    width:100%!important;
+    min-width:0!important;
+  }
+  body.print-month .monthPrintMeterbox .sideAxis{
+    display:grid!important;
+    grid-template-rows:1fr 1fr!important;
+    font-size:9px!important;
+    color:#555!important;
+    font-weight:800!important;
+  }
+  body.print-month .monthPrintMeterbox .verticalEnergy{
+    line-height:1.05!important;
+  }
+  body.print-month .monthPrintMeterbox .sameComfortAxis{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    width:100%!important;
+    min-width:0!important;
+    padding:0 10px!important;
+    font-size:9.5px!important;
+    line-height:1.05!important;
+    margin:2px 0!important;
+  }
+  body.print-month #monthPrintMeter.meter{
+    min-width:0!important;
+    width:100%!important;
+    display:grid!important;
+    grid-template-columns:repeat(10,1fr)!important;
+    grid-template-rows:repeat(10,54px)!important;
+    gap:2px!important;
+  }
+  body.print-month #monthPrintMeter .cell{
+    font-size:10.5px!important;
+    line-height:1.03!important;
+    padding:1px!important;
+    border-radius:3px!important;
+  }
+  body.print-month #monthPrintMeter .cell .en{
+    font-size:7px!important;
+    margin-top:1px!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -1004,14 +1081,34 @@ body.print-month #monthPrintPage{
   <div id="monthPrintRange" class="printTitle"></div>
   <div id="monthPrintSummary" class="summaryGrid"></div>
   <div class="meterbox monthPrintMeterbox">
-    <div class="topLabels">
-      <div class="quadLabel quadRed">빨강 월간 누계</div>
-      <div class="quadLabel quadYellow">노랑 월간 누계</div>
-    </div>
-    <div id="monthPrintMeter" class="meter"></div>
-    <div class="bottomLabels">
-      <div class="quadLabel quadBlue">파랑 월간 누계</div>
-      <div class="quadLabel quadGreen">초록 월간 누계</div>
+    <div class="meterWithSideAxis">
+      <div class="sideAxis">
+        <span class="verticalEnergy">활<br>력<br>높<br>음<br>↑</span>
+        <span class="verticalEnergy">활<br>력<br>낮<br>음<br>↓</span>
+      </div>
+      <div class="meterCore">
+        <div class="comfortAxis sameComfortAxis">
+          <div>← 쾌적함 낮음</div>
+          <div>쾌적함 높음 →</div>
+        </div>
+        <div class="topLabels">
+          <div class="quadLabel quadRed">고활력 · 낮은 쾌적함</div>
+          <div class="quadLabel quadYellow">고활력 · 높은 쾌적함</div>
+        </div>
+        <div id="monthPrintMeter" class="meter"></div>
+        <div class="bottomLabels">
+          <div class="quadLabel quadBlue">저활력 · 낮은 쾌적함</div>
+          <div class="quadLabel quadGreen">저활력 · 높은 쾌적함</div>
+        </div>
+        <div class="comfortAxis sameComfortAxis">
+          <div>← 쾌적함 낮음</div>
+          <div>쾌적함 높음 →</div>
+        </div>
+      </div>
+      <div class="sideAxis">
+        <span class="verticalEnergy">활<br>력<br>높<br>음<br>↑</span>
+        <span class="verticalEnergy">활<br>력<br>낮<br>음<br>↓</span>
+      </div>
     </div>
   </div>
 </section>
