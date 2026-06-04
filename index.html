@@ -1206,6 +1206,7 @@ body.print-month #monthPrintPage{
     <input id="authPasswordConfirmInput" type="password" placeholder="비밀번호 확인" autocomplete="new-password" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:14px;display:none">
 
     <button id="authSubmitBtn" type="button" onclick="submitAuth()" style="width:100%;padding:15px;font-size:19px;font-weight:900;border:none;border-radius:16px;background:#4CAF50;color:white;cursor:pointer">로그인하기</button>
+<button type="button" onclick="forgotPasswordMoodMeter()" style="margin-top:10px;width:100%;padding:12px;font-size:15px;font-weight:900;border:none;border-radius:14px;background:#eeeeee;color:#333;cursor:pointer">비밀번호 찾기</button>
     <div id="authMessage" style="min-height:22px;margin-top:12px;font-size:14px;font-weight:800;color:#c62828"></div>
   </div>
 </section>
@@ -1224,6 +1225,7 @@ body.print-month #monthPrintPage{
   <div class="subtitle">오늘 감정 3가지를 4분면에서 선택하고, 일주일 동안 머문 색을 확인합니다.</div>
   <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px">
     <button type="button" onclick="showNameScreen()" style="border:0;border-radius:999px;padding:8px 14px;font-weight:800;background:#6d4c41;color:white;cursor:pointer">이름 변경하기</button>
+    <button type="button" onclick="changePasswordMoodMeter()" style="border:0;border-radius:999px;padding:8px 14px;font-weight:800;background:#4CAF50;color:white;cursor:pointer">비밀번호 변경하기</button>
     <button type="button" onclick="logoutMoodMeter()" style="border:0;border-radius:999px;padding:8px 14px;font-weight:800;background:#222;color:white;cursor:pointer">로그아웃</button>
   </div>
 </header>
@@ -2399,7 +2401,7 @@ async function signupMoodMeter(){
     const res=await fetch(`${MOOD_API_BASE}/signup`, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email,loginId:email,password})
+      body:JSON.stringify({email,loginId:email,password,name:(document.getElementById('signupNameInput')?.value||'').trim()})
     });
     const result=await res.json();
 
@@ -2434,7 +2436,7 @@ async function loginMoodMeter(fromSignup=false){
     const res=await fetch(`${MOOD_API_BASE}/login`, {
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({email,loginId:email,password})
+      body:JSON.stringify({email,loginId:email,password,name:(document.getElementById('signupNameInput')?.value||'').trim()})
     });
     const result=await res.json();
 
@@ -2709,6 +2711,78 @@ window.addEventListener('DOMContentLoaded', function(){
     }
   }, 300);
 });
+</script>
+
+
+<script>
+async function forgotPasswordMoodMeter(){
+  const loginId = prompt('가입한 아이디 또는 이메일을 입력하세요.');
+  if(!loginId) return;
+
+  const name = prompt('회원가입 때 입력한 이름을 입력하세요.');
+  if(!name) return;
+
+  const newPassword = prompt('새 비밀번호를 입력하세요.');
+  if(!newPassword) return;
+
+  const newPassword2 = prompt('새 비밀번호를 한 번 더 입력하세요.');
+  if(newPassword !== newPassword2){
+    alert('새 비밀번호가 서로 다릅니다.');
+    return;
+  }
+
+  try{
+    const res = await fetch(MOODMETER_API_BASE + '/password/reset', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        loginId:loginId.trim(),
+        name:name.trim(),
+        newPassword
+      })
+    });
+    const result = await res.json();
+    alert(result.message || (result.success ? '비밀번호가 변경되었습니다.' : '비밀번호 변경에 실패했습니다.'));
+  }catch(e){
+    alert('비밀번호 찾기 요청 중 오류가 발생했습니다.');
+  }
+}
+
+async function changePasswordMoodMeter(){
+  const user = getLoginUser ? getLoginUser() : JSON.parse(localStorage.getItem('moodmeterUser') || 'null');
+  if(!user || !user.userId){
+    alert('로그인이 필요합니다.');
+    return;
+  }
+
+  const currentPassword = prompt('현재 비밀번호를 입력하세요.');
+  if(!currentPassword) return;
+
+  const newPassword = prompt('새 비밀번호를 입력하세요.');
+  if(!newPassword) return;
+
+  const newPassword2 = prompt('새 비밀번호를 한 번 더 입력하세요.');
+  if(newPassword !== newPassword2){
+    alert('새 비밀번호가 서로 다릅니다.');
+    return;
+  }
+
+  try{
+    const res = await fetch(MOODMETER_API_BASE + '/password/change', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        userId:user.userId,
+        currentPassword,
+        newPassword
+      })
+    });
+    const result = await res.json();
+    alert(result.message || (result.success ? '비밀번호가 변경되었습니다.' : '비밀번호 변경에 실패했습니다.'));
+  }catch(e){
+    alert('비밀번호 변경 요청 중 오류가 발생했습니다.');
+  }
+}
 </script>
 
 </body>
