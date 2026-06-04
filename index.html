@@ -1001,6 +1001,41 @@ body.print-month #monthPrintPage{
   border:1px solid rgba(0,0,0,.5)!important;
 }
 
+
+#pdfWeekPage,
+#pdfMonthPage{
+  display:block!important;
+  color:#111!important;
+}
+#pdfWeekPage .panel,
+#pdfMonthPage .panel{
+  display:block!important;
+}
+#pdfWeekPage .meterbox,
+#pdfMonthPage .meterbox{
+  overflow:visible!important;
+}
+#pdfWeekPage .cell.red,
+#pdfMonthPage .cell.red{
+  background:linear-gradient(135deg,#8e1b1b,#f05a28)!important;
+  color:white!important;
+}
+#pdfWeekPage .cell.yellow,
+#pdfMonthPage .cell.yellow{
+  background:linear-gradient(135deg,#f6ea65,#f6a91a)!important;
+  color:#222!important;
+}
+#pdfWeekPage .cell.blue,
+#pdfMonthPage .cell.blue{
+  background:linear-gradient(135deg,#1a237e,#2da9e9)!important;
+  color:white!important;
+}
+#pdfWeekPage .cell.green,
+#pdfMonthPage .cell.green{
+  background:linear-gradient(135deg,#a5d927,#0f8f2f)!important;
+  color:white!important;
+}
+
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1673,92 +1708,55 @@ function syncCurrentDayToToday(){
 
 
 
-function preparePdfPage(page){
-  page.style.position='fixed';
-  page.style.left='0';
+
+function prepareVisiblePdfClone(page){
+  page.style.position='absolute';
+  page.style.left='-10000px';
   page.style.top='0';
-  page.style.width='1123px';
-  page.style.minHeight='794px';
+  page.style.width='1200px';
   page.style.background='#ffffff';
   page.style.padding='18px';
   page.style.boxSizing='border-box';
-  page.style.zIndex='-1';
-  page.style.opacity='0';
   page.style.overflow='visible';
+  page.style.opacity='1';
+  page.style.zIndex='1';
 
   page.querySelectorAll('*').forEach(el=>{
     el.style.webkitPrintColorAdjust='exact';
     el.style.printColorAdjust='exact';
   });
 
+  page.querySelectorAll('.panel').forEach(el=>{
+    el.style.display='block';
+  });
+
+  page.querySelectorAll('.actions').forEach(el=>{
+    el.style.display='none';
+  });
+
   page.querySelectorAll('.meterbox').forEach(el=>{
     el.style.overflow='visible';
-    el.style.boxShadow='none';
-    el.style.border='0';
-    el.style.padding='0';
-    el.style.margin='0';
-    el.style.background='#fff';
   });
 
   page.querySelectorAll('.meterWithSideAxis').forEach(el=>{
-    el.style.display='grid';
-    el.style.gridTemplateColumns='18px minmax(0, 1fr) 18px';
-    el.style.gap='3px';
-    el.style.width='100%';
     el.style.minWidth='0';
-    el.style.alignItems='stretch';
+    el.style.width='100%';
   });
 
   page.querySelectorAll('.meterCore').forEach(el=>{
-    el.style.width='100%';
-    el.style.minWidth='0';
-  });
-
-  page.querySelectorAll('.topLabels,.bottomLabels').forEach(el=>{
     el.style.minWidth='0';
     el.style.width='100%';
-    el.style.display='grid';
-    el.style.gridTemplateColumns='1fr 1fr';
-    el.style.gap='4px';
   });
 
   page.querySelectorAll('.meter').forEach(el=>{
     el.style.minWidth='0';
     el.style.width='100%';
-    el.style.display='grid';
-    el.style.gridTemplateColumns='repeat(10, 1fr)';
-    el.style.gridTemplateRows='repeat(10, 54px)';
-    el.style.gap='2px';
   });
 
-  page.querySelectorAll('.cell').forEach(el=>{
-    el.style.fontSize='11.6px';
-    el.style.lineHeight='1.03';
-    el.style.padding='1px';
-    el.style.borderRadius='3px';
+  page.querySelectorAll('.topLabels,.bottomLabels').forEach(el=>{
+    el.style.minWidth='0';
+    el.style.width='100%';
   });
-
-  page.querySelectorAll('.cell .en').forEach(el=>{
-    el.style.fontSize='7.8px';
-    el.style.marginTop='1px';
-  });
-
-  page.querySelectorAll('.summaryGrid').forEach(el=>{
-    el.style.display='grid';
-    el.style.gridTemplateColumns='repeat(4, 1fr)';
-    el.style.gap='5px';
-    el.style.margin='0 0 8px';
-  });
-
-  page.querySelectorAll('.summaryCard').forEach(el=>{
-    el.style.boxShadow='none';
-    el.style.border='1px solid #ddd';
-    el.style.borderRadius='8px';
-    el.style.padding='6px 8px';
-    el.style.fontSize='10.5px';
-  });
-
-  page.querySelectorAll('.actions,.notice,.log').forEach(el=>el.remove());
 }
 
 async function createPdfFromElement(element, fileName, orientation='landscape'){
@@ -1769,10 +1767,10 @@ async function createPdfFromElement(element, fileName, orientation='landscape'){
 
   const { jsPDF } = window.jspdf;
 
-  await new Promise(resolve=>setTimeout(resolve,150));
+  await new Promise(resolve=>setTimeout(resolve,250));
 
   const canvas = await html2canvas(element, {
-    scale: 2.5,
+    scale: 2,
     useCORS: true,
     allowTaint: true,
     backgroundColor: '#ffffff',
@@ -1786,22 +1784,29 @@ async function createPdfFromElement(element, fileName, orientation='landscape'){
 
   const pdf = new jsPDF({
     orientation,
-    unit: 'mm',
-    format: 'a4'
+    unit:'mm',
+    format:'a4'
   });
 
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
 
   const imgData = canvas.toDataURL('image/png', 1.0);
+  const imgWidth = pageWidth;
+  const imgHeight = canvas.height * imgWidth / canvas.width;
 
-  const ratio = Math.min(pageWidth / canvas.width, pageHeight / canvas.height);
-  const imgWidth = canvas.width * ratio;
-  const imgHeight = canvas.height * ratio;
-  const x = (pageWidth - imgWidth) / 2;
-  const y = (pageHeight - imgHeight) / 2;
+  let position = 0;
+  let heightLeft = imgHeight;
 
-  pdf.addImage(imgData, 'PNG', x, y, imgWidth, imgHeight, undefined, 'FAST');
+  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+  heightLeft -= pageHeight;
+
+  while(heightLeft > 0){
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight, undefined, 'FAST');
+    heightLeft -= pageHeight;
+  }
 
   const blob = pdf.output('blob');
   const file = new File([blob], fileName, { type:'application/pdf' });
@@ -1821,32 +1826,34 @@ async function createPdfFromElement(element, fileName, orientation='landscape'){
     a.click();
     a.remove();
     URL.revokeObjectURL(url);
-    alert('이 기기에서는 자동 공유가 지원되지 않아 PDF 파일로 저장했습니다. 저장된 파일을 카카오톡 등에서 공유해주세요.');
+    alert('PDF 파일로 저장했습니다. 저장된 파일을 카카오톡 등에서 공유해주세요.');
   }
 }
 
 function buildWeekPdfPage(){
-  const source = document.getElementById('week');
+  const source=document.getElementById('week');
   if(!source)return null;
 
-  const clone = source.cloneNode(true);
-  clone.style.display='block';
-  clone.classList.add('active');
+  const page=document.createElement('div');
+  page.id='pdfWeekPage';
 
-  const page = document.createElement('div');
-  page.id = 'pdfWeekPage';
+  const clone=source.cloneNode(true);
+  clone.classList.add('active');
+  clone.style.display='block';
+
   page.appendChild(clone);
   document.body.appendChild(page);
-  preparePdfPage(page);
+  prepareVisiblePdfClone(page);
 
   return page;
 }
 
 async function shareWeekPDF(){
-  const page = buildWeekPdfPage();
+  const page=buildWeekPdfPage();
   if(!page)return;
+
   try{
-    await createPdfFromElement(page, '주간_무드미터.pdf', 'landscape');
+    await createPdfFromElement(page, '주간_무드미터_기록.pdf', 'landscape');
   }finally{
     page.remove();
   }
@@ -1855,38 +1862,41 @@ async function shareWeekPDF(){
 function buildMonthPdfPage(year, monthIndex){
   renderMonthPrintMeter(year, monthIndex);
 
-  const source = document.getElementById('monthPrintPage');
+  const source=document.getElementById('monthPrintPage');
   if(!source)return null;
 
-  const clone = source.cloneNode(true);
+  const page=document.createElement('div');
+  page.id='pdfMonthPage';
+
+  const clone=source.cloneNode(true);
   clone.style.display='block';
   clone.classList.add('active');
 
-  const page = document.createElement('div');
-  page.id = 'pdfMonthPage';
   page.appendChild(clone);
   document.body.appendChild(page);
-  preparePdfPage(page);
+  prepareVisiblePdfClone(page);
 
   return page;
 }
 
 async function shareSelectedMonthPDF(){
-  const year = new Date().getFullYear();
-  const page = buildMonthPdfPage(year, selectedMonthIndex);
+  const year=new Date().getFullYear();
+  const page=buildMonthPdfPage(year, selectedMonthIndex);
   if(!page)return;
+
   try{
-    await createPdfFromElement(page, `${year}년_${selectedMonthIndex+1}월_무드미터.pdf`, 'landscape');
+    await createPdfFromElement(page, `${year}년_${selectedMonthIndex+1}월_무드미터_기록.pdf`, 'landscape');
   }finally{
     page.remove();
   }
 }
 
 async function shareSelectedYearMonthPDF(){
-  const page = buildMonthPdfPage(selectedYearValue, selectedYearMonthIndex);
+  const page=buildMonthPdfPage(selectedYearValue, selectedYearMonthIndex);
   if(!page)return;
+
   try{
-    await createPdfFromElement(page, `${selectedYearValue}년_${selectedYearMonthIndex+1}월_무드미터.pdf`, 'landscape');
+    await createPdfFromElement(page, `${selectedYearValue}년_${selectedYearMonthIndex+1}월_무드미터_기록.pdf`, 'landscape');
   }finally{
     page.remove();
   }
