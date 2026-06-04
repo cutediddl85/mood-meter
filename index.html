@@ -1053,6 +1053,44 @@ body.print-month #monthPrintPage{
   width:9px!important;height:9px!important;border:1px solid rgba(0,0,0,.55)!important;
 }
 
+
+/* PDF 공유 전용: 인쇄 미리보기처럼 무드미터 색 선명하게 */
+#pdfWeekPage .cell,
+#pdfMonthPage .cell{
+  opacity:1!important;
+  filter:saturate(1.35) contrast(1.12)!important;
+}
+#pdfWeekPage .cell.red,
+#pdfMonthPage .cell.red{
+  background:linear-gradient(135deg,#9f1f1f,#f05a28)!important;
+  color:#fff!important;
+}
+#pdfWeekPage .cell.yellow,
+#pdfMonthPage .cell.yellow{
+  background:linear-gradient(135deg,#fff06a,#f4a51c)!important;
+  color:#111!important;
+}
+#pdfWeekPage .cell.blue,
+#pdfMonthPage .cell.blue{
+  background:linear-gradient(135deg,#12308f,#16a9e6)!important;
+  color:#fff!important;
+}
+#pdfWeekPage .cell.green,
+#pdfMonthPage .cell.green{
+  background:linear-gradient(135deg,#8fd224,#0a982f)!important;
+  color:#fff!important;
+}
+#pdfWeekPage .cell span,
+#pdfMonthPage .cell span,
+#pdfWeekPage .cell .en,
+#pdfMonthPage .cell .en{
+  opacity:1!important;
+}
+#pdfWeekPage .quadRed,#pdfMonthPage .quadRed{background:#fde5dd!important;color:#9a1b1b!important}
+#pdfWeekPage .quadYellow,#pdfMonthPage .quadYellow{background:#fff4b8!important;color:#7a4b00!important}
+#pdfWeekPage .quadBlue,#pdfMonthPage .quadBlue{background:#dfeeff!important;color:#123b79!important}
+#pdfWeekPage .quadGreen,#pdfMonthPage .quadGreen{background:#e1f4d1!important;color:#176229!important}
+
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1868,12 +1906,41 @@ function applyPdfStyles(page){
     el.style.padding='0';
     el.style.margin='0';
   });
+
+  // PDF 공유용 무드미터 색상 선명도 보정
+  page.querySelectorAll('.cell.red').forEach(el=>{
+    el.style.background='linear-gradient(135deg,#9f1f1f,#f05a28)';
+    el.style.color='#ffffff';
+    el.style.opacity='1';
+    el.style.filter='saturate(1.35) contrast(1.12)';
+  });
+  page.querySelectorAll('.cell.yellow').forEach(el=>{
+    el.style.background='linear-gradient(135deg,#fff06a,#f4a51c)';
+    el.style.color='#111111';
+    el.style.opacity='1';
+    el.style.filter='saturate(1.25) contrast(1.08)';
+  });
+  page.querySelectorAll('.cell.blue').forEach(el=>{
+    el.style.background='linear-gradient(135deg,#12308f,#16a9e6)';
+    el.style.color='#ffffff';
+    el.style.opacity='1';
+    el.style.filter='saturate(1.35) contrast(1.12)';
+  });
+  page.querySelectorAll('.cell.green').forEach(el=>{
+    el.style.background='linear-gradient(135deg,#8fd224,#0a982f)';
+    el.style.color='#ffffff';
+    el.style.opacity='1';
+    el.style.filter='saturate(1.35) contrast(1.12)';
+  });
+  page.querySelectorAll('.cell span').forEach(el=>{
+    el.style.opacity='1';
+  });
 }
 
 async function canvasForPage(page){
   await new Promise(resolve=>setTimeout(resolve,250));
   return await html2canvas(page, {
-    scale: 3,
+    scale: 3.5,
     useCORS: true,
     allowTaint: true,
     backgroundColor: '#ffffff',
