@@ -1196,15 +1196,54 @@ html.start-login #appShell{
 
 
 <style>
-/* 우측 상단 사용자 버튼 정렬 */
+/* FINAL FIX: 이름 변경/비밀번호 변경/로그아웃 버튼 우측 상단 고정 */
+header{
+  position:relative!important;
+  padding-top:56px!important;
+}
 .top-user-actions{
-  position:absolute;
-  top:12px;
-  right:12px;
-  display:flex;
-  gap:8px;
-  align-items:center;
-  z-index:9999;
+  position:absolute!important;
+  top:12px!important;
+  right:12px!important;
+  display:flex!important;
+  gap:8px!important;
+  align-items:center!important;
+  justify-content:flex-end!important;
+  flex-wrap:nowrap!important;
+  margin:0!important;
+  z-index:9999!important;
+}
+.top-user-actions button{
+  border:0!important;
+  border-radius:999px!important;
+  padding:8px 12px!important;
+  font-size:13px!important;
+  font-weight:900!important;
+  color:white!important;
+  cursor:pointer!important;
+  white-space:nowrap!important;
+  line-height:1.1!important;
+}
+@media(max-width:760px){
+  header{
+    padding-top:96px!important;
+  }
+  .top-user-actions{
+    top:10px!important;
+    right:10px!important;
+    left:10px!important;
+    justify-content:flex-end!important;
+    gap:6px!important;
+  }
+  .top-user-actions button{
+    padding:7px 9px!important;
+    font-size:12px!important;
+  }
+}
+@media print{
+  .top-user-actions{
+    display:none!important;
+  }
 }
 </style>
 
@@ -1247,10 +1286,10 @@ html.start-login #appShell{
 <header>
   <h1 id="mainTitle">MOOD METER 무드 미터</h1>
   <div class="subtitle">오늘 감정 3가지를 4분면에서 선택하고, 일주일 동안 머문 색을 확인합니다.</div>
-  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px">
-    <button type="button" onclick="showNameScreen()" style="border:0;border-radius:999px;padding:8px 14px;font-weight:800;background:#6d4c41;color:white;cursor:pointer">이름 변경하기</button>
-    <button type="button" onclick="changePasswordMoodMeter()" style="border:0;border-radius:999px;padding:8px 14px;font-weight:800;background:#4CAF50;color:white;cursor:pointer">비밀번호 변경하기</button>
-    <button type="button" onclick="logoutMoodMeter()" style="border:0;border-radius:999px;padding:8px 14px;font-weight:800;background:#222;color:white;cursor:pointer">로그아웃</button>
+  <div class="top-user-actions">
+    <button type="button" onclick="showNameScreen()" style="border:0;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:900;background:#6d4c41;color:white;cursor:pointer;white-space:nowrap">이름 변경하기</button>
+    <button type="button" onclick="changePasswordMoodMeter()" style="border:0;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:900;background:#4CAF50;color:white;cursor:pointer;white-space:nowrap">비밀번호 변경하기</button>
+    <button type="button" onclick="logoutMoodMeter()" style="border:0;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:900;background:#222;color:white;cursor:pointer;white-space:nowrap">로그아웃</button>
   </div>
 </header>
 <div class="tabs"><button class="tab active" data-tab="today">오늘 기록</button><button class="tab" data-tab="week">주간 누계</button><button class="tab" data-tab="month">월간 누계</button><button class="tab" data-tab="year">연간 누계</button></div>
