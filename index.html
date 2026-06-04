@@ -1201,7 +1201,7 @@ body.print-month #monthPrintPage{
       <input id="signupNameInput" type="text" placeholder="이름" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none">
     </div>
 
-    <input id="authEmailInput" type="text" placeholder="아이디 또는 아이디 또는 이메일" autocomplete="username" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:10px">
+    <input id="authEmailInput" type="text" placeholder="아이디 또는 이메일" autocomplete="username" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:10px">
     <input id="authPasswordInput" type="password" placeholder="비밀번호" autocomplete="current-password" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:10px">
     <input id="authPasswordConfirmInput" type="password" placeholder="비밀번호 확인" autocomplete="new-password" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:14px;display:none">
 
@@ -2388,7 +2388,7 @@ async function signupMoodMeter(){
   const confirm=(document.getElementById('authPasswordConfirmInput')?.value || '').trim();
 
   if(!name){ setAuthMessage('이름을 입력해주세요.'); return; }
-  if(!email){ setAuthMessage('아이디 또는 아이디 또는 이메일을 입력해주세요.'); return; }
+  if(!email){ setAuthMessage('아이디 또는 이메일을 입력해주세요.'); return; }
   if(!password){ setAuthMessage('비밀번호를 입력해주세요.'); return; }
   if(password.length < 4){ setAuthMessage('비밀번호는 4자 이상으로 입력해주세요.'); return; }
   if(password !== confirm){ setAuthMessage('비밀번호 확인이 일치하지 않습니다.'); return; }
@@ -2425,7 +2425,7 @@ async function loginMoodMeter(fromSignup=false){
   const email=(document.getElementById('authEmailInput')?.value || '').trim();
   const password=(document.getElementById('authPasswordInput')?.value || '').trim();
 
-  if(!email){ setAuthMessage('아이디 또는 아이디 또는 이메일을 입력해주세요.'); return; }
+  if(!email){ setAuthMessage('아이디 또는 이메일을 입력해주세요.'); return; }
   if(!password){ setAuthMessage('비밀번호를 입력해주세요.'); return; }
 
   const btn=document.getElementById('authSubmitBtn');
@@ -2446,7 +2446,13 @@ async function loginMoodMeter(fromSignup=false){
     }
 
     localStorage.setItem('moodAuthUserId', String(result.userId));
-    localStorage.setItem('moodAuthEmail', result.email || email);
+    localStorage.setItem('moodAuthEmail', result.loginId || result.email || email);
+    localStorage.setItem('moodmeterUser', JSON.stringify({
+      userId: result.userId,
+      loginId: result.loginId || result.email || email,
+      email: result.loginId || result.email || email,
+      name: result.name || ''
+    }));
 
     const pendingName=localStorage.getItem('pendingMoodName') || '';
     if(pendingName){
@@ -2454,7 +2460,7 @@ async function loginMoodMeter(fromSignup=false){
       localStorage.removeItem('pendingMoodName');
     }
 
-    loadUserMoodData();
+    await afterLoginLoadUserRecords();
 
     const savedName=localStorage.getItem(userKey('moodUserName')) || '';
     if(savedName.trim()){
@@ -2564,6 +2570,9 @@ function logoutMoodMeter(){
   if(!confirm('로그아웃할까요?'))return;
   localStorage.removeItem('moodAuthUserId');
   localStorage.removeItem('moodAuthEmail');
+  localStorage.removeItem('moodmeterUser');
+  resetMemoryForLoginUser();
+  renderAll();
   showAuthScreen();
 }
 
@@ -2588,7 +2597,14 @@ function bootAuthFlow(){
   currentDay=getTodayDayKey();
 
   if(authUserId()){
-    loadUserMoodData();
+    if(!localStorage.getItem('moodmeterUser')){
+      localStorage.setItem('moodmeterUser', JSON.stringify({
+        userId: authUserId(),
+        loginId: localStorage.getItem('moodAuthEmail') || '',
+        email: localStorage.getItem('moodAuthEmail') || ''
+      }));
+    }
+    afterLoginLoadUserRecords();
     const savedName=localStorage.getItem(userKey('moodUserName')) || '';
     if(savedName.trim()) showMoodApp();
     else showNameScreen();
@@ -2619,7 +2635,14 @@ const MOODMETER_API_BASE = "https://moodmeter-api.cutediddl.workers.dev";
 
 function getLoginUser(){
   try {
-    return JSON.parse(localStorage.getItem('moodmeterUser') || 'null');
+    const user = JSON.parse(localStorage.getItem('moodmeterUser') || 'null');
+    if(user && user.userId) return user;
+    const fallbackId = localStorage.getItem('moodAuthUserId');
+    const fallbackLogin = localStorage.getItem('moodAuthEmail') || '';
+    if(fallbackId){
+      return { userId:fallbackId, loginId:fallbackLogin, email:fallbackLogin };
+    }
+    return null;
   } catch(e) {
     return null;
   }
@@ -2627,7 +2650,9 @@ function getLoginUser(){
 
 function getLoginUserId(){
   const user = getLoginUser();
-  return user && user.userId ? user.userId : null;
+  if(user && user.userId) return user.userId;
+  const fallback = localStorage.getItem('moodAuthUserId');
+  return fallback ? fallback : null;
 }
 
 async function apiSaveAllRecords(){
@@ -2782,6 +2807,47 @@ async function changePasswordMoodMeter(){
   }catch(e){
     alert('비밀번호 변경 요청 중 오류가 발생했습니다.');
   }
+}
+</script>
+
+
+<script>
+/* FINAL FIX v2: 아이디/이메일 모두 userId 기준으로 D1 저장 */
+function getStableUserId(){
+  const user = getLoginUser ? getLoginUser() : null;
+  if(user && user.userId) return String(user.userId);
+  return localStorage.getItem('moodAuthUserId') || '';
+}
+
+save = function(){
+  try{
+    if(typeof currentWeekDateKey === 'function'){
+      datedData[currentWeekDateKey(currentDay)] = data[currentDay] || [];
+    }
+  }catch(e){}
+
+  try{
+    const userId = getStableUserId();
+    if(userId){
+      localStorage.setItem('moodWeekV2_' + userId, JSON.stringify(data));
+      localStorage.setItem('moodDatedV1_' + userId, JSON.stringify(datedData));
+    }
+  }catch(e){}
+
+  apiSaveAllRecords();
+};
+
+async function forceLoadCurrentUserFromDB(){
+  const userId = getStableUserId();
+  if(!userId) return;
+  if(!localStorage.getItem('moodmeterUser')){
+    localStorage.setItem('moodmeterUser', JSON.stringify({
+      userId,
+      loginId: localStorage.getItem('moodAuthEmail') || '',
+      email: localStorage.getItem('moodAuthEmail') || ''
+    }));
+  }
+  await apiLoadAllRecords();
 }
 </script>
 
