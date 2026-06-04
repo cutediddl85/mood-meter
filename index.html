@@ -3095,6 +3095,39 @@ window.addEventListener('load', function(){
 });
 </script>
 
+
+<script>
+/* FINAL START SCREEN FIX:
+   어떤 화면에서 종료했든, 웹페이지를 새로 열면 항상 로그인 화면부터 시작합니다.
+   기록은 D1 DB에 이메일별로 남아 있고, 로그인 후 다시 불러옵니다.
+*/
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    try{
+      // 자동 로그인 상태만 제거합니다. DB 기록은 삭제하지 않습니다.
+      localStorage.removeItem('moodAuthUserId');
+      localStorage.removeItem('moodAuthEmail');
+      localStorage.removeItem('moodmeterUser');
+
+      // 화면 상태 초기화
+      const auth = document.getElementById('authScreen');
+      const welcome = document.getElementById('welcomeScreen');
+      const app = document.getElementById('appShell');
+
+      if(auth) auth.style.display = 'flex';
+      if(welcome) welcome.style.display = 'none';
+      if(app) app.style.display = 'none';
+
+      if(typeof showAuthMode === 'function'){
+        showAuthMode('login');
+      }
+    }catch(e){
+      console.warn('시작 화면 로그인 고정 처리 오류:', e);
+    }
+  }, 1000);
+});
+</script>
+
 </body>
 <!-- source: uploaded file modified -->
 </html>
