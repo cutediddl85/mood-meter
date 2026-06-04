@@ -1091,6 +1091,46 @@ body.print-month #monthPrintPage{
 #pdfWeekPage .quadBlue,#pdfMonthPage .quadBlue{background:#dfeeff!important;color:#123b79!important}
 #pdfWeekPage .quadGreen,#pdfMonthPage .quadGreen{background:#e1f4d1!important;color:#176229!important}
 
+
+/* FINAL PDF COLOR FIX: PDF 공유 무드미터 색상을 화면처럼 진하게 고정 */
+#pdfWeekPage .cell,
+#pdfMonthPage .cell{
+  opacity:1!important;
+  filter:none!important;
+  mix-blend-mode:normal!important;
+}
+#pdfWeekPage .cell.red,
+#pdfMonthPage .cell.red{
+  background:linear-gradient(135deg,#A91F1F,#E94B2A)!important;
+  background-color:#C8372B!important;
+  color:#fff!important;
+}
+#pdfWeekPage .cell.yellow,
+#pdfMonthPage .cell.yellow{
+  background:linear-gradient(135deg,#FFE45C,#F4AE26)!important;
+  background-color:#F6C342!important;
+  color:#111!important;
+}
+#pdfWeekPage .cell.blue,
+#pdfMonthPage .cell.blue{
+  background:linear-gradient(135deg,#173A9A,#22A7E0)!important;
+  background-color:#2378C5!important;
+  color:#fff!important;
+}
+#pdfWeekPage .cell.green,
+#pdfMonthPage .cell.green{
+  background:linear-gradient(135deg,#83C92A,#15953A)!important;
+  background-color:#41AA3E!important;
+  color:#fff!important;
+}
+#pdfWeekPage .cell span,
+#pdfMonthPage .cell span,
+#pdfWeekPage .cell .en,
+#pdfMonthPage .cell .en{
+  opacity:1!important;
+  filter:none!important;
+}
+
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1907,43 +1947,49 @@ function applyPdfStyles(page){
     el.style.margin='0';
   });
 
-  // PDF 공유용: 실제 화면 색상처럼 선명하게 고정
+  // PDF 공유용: 첨부 이미지와 비슷하게 진한 원본 색상으로 강제 고정
   page.querySelectorAll('.cell.red').forEach(el=>{
-    el.style.background='linear-gradient(135deg,#8e1b1b,#f05a28)';
-    el.style.color='#ffffff';
-    el.style.opacity='1';
-    el.style.filter='none';
+    el.style.setProperty('background', 'linear-gradient(135deg,#A91F1F,#E94B2A)', 'important');
+    el.style.setProperty('background-color', '#C8372B', 'important');
+    el.style.setProperty('color', '#ffffff', 'important');
+    el.style.setProperty('opacity', '1', 'important');
+    el.style.setProperty('filter', 'none', 'important');
   });
   page.querySelectorAll('.cell.yellow').forEach(el=>{
-    el.style.background='linear-gradient(135deg,#f6ea65,#f6a91a)';
-    el.style.color='#111111';
-    el.style.opacity='1';
-    el.style.filter='none';
+    el.style.setProperty('background', 'linear-gradient(135deg,#FFE45C,#F4AE26)', 'important');
+    el.style.setProperty('background-color', '#F6C342', 'important');
+    el.style.setProperty('color', '#111111', 'important');
+    el.style.setProperty('opacity', '1', 'important');
+    el.style.setProperty('filter', 'none', 'important');
   });
   page.querySelectorAll('.cell.blue').forEach(el=>{
-    el.style.background='linear-gradient(135deg,#1a237e,#2da9e9)';
-    el.style.color='#ffffff';
-    el.style.opacity='1';
-    el.style.filter='none';
+    el.style.setProperty('background', 'linear-gradient(135deg,#173A9A,#22A7E0)', 'important');
+    el.style.setProperty('background-color', '#2378C5', 'important');
+    el.style.setProperty('color', '#ffffff', 'important');
+    el.style.setProperty('opacity', '1', 'important');
+    el.style.setProperty('filter', 'none', 'important');
   });
   page.querySelectorAll('.cell.green').forEach(el=>{
-    el.style.background='linear-gradient(135deg,#a5d927,#0f8f2f)';
-    el.style.color='#ffffff';
-    el.style.opacity='1';
-    el.style.filter='none';
+    el.style.setProperty('background', 'linear-gradient(135deg,#83C92A,#15953A)', 'important');
+    el.style.setProperty('background-color', '#41AA3E', 'important');
+    el.style.setProperty('color', '#ffffff', 'important');
+    el.style.setProperty('opacity', '1', 'important');
+    el.style.setProperty('filter', 'none', 'important');
   });
   page.querySelectorAll('.cell span,.cell .en').forEach(el=>{
-    el.style.opacity='1';
+    el.style.setProperty('opacity', '1', 'important');
+    el.style.setProperty('filter', 'none', 'important');
   });
 }
 
 async function canvasForPage(page){
   await new Promise(resolve=>setTimeout(resolve,250));
   return await html2canvas(page, {
-    scale: 3.5,
+    scale: 3,
     useCORS: true,
     allowTaint: true,
     backgroundColor: '#ffffff',
+    foreignObjectRendering: false,
     width: page.scrollWidth,
     height: page.scrollHeight,
     windowWidth: page.scrollWidth,
