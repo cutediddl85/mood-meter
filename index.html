@@ -2605,9 +2605,109 @@ window.addEventListener('load',()=>{
 window.addEventListener('DOMContentLoaded', function(){
   try{
     if(localStorage.getItem('moodmeterUser') && typeof reloadDataForCurrentUser === 'function'){
-      reloadDataForCurrentUser();
+      afterLoginLoadUserRecords();
     }
   }catch(e){}
+});
+</script>
+
+
+<script>
+const MOODMETER_API_BASE = "https://moodmeter-api.cutediddl.workers.dev";
+
+function getLoginUser(){
+  try {
+    return JSON.parse(localStorage.getItem('moodmeterUser') || 'null');
+  } catch(e) {
+    return null;
+  }
+}
+
+function getLoginUserId(){
+  const user = getLoginUser();
+  return user && user.userId ? user.userId : null;
+}
+
+async function apiSaveAllRecords(){
+  const userId = getLoginUserId();
+  if(!userId) return;
+
+  const payload = {
+    userId,
+    moodWeek: data || {},
+    moodDated: datedData || {}
+  };
+
+  try {
+    await fetch(MOODMETER_API_BASE + "/records/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+  } catch(e) {
+    console.warn("DB 저장 실패:", e);
+  }
+}
+
+async function apiLoadAllRecords(){
+  const userId = getLoginUserId();
+  if(!userId) return;
+
+  try {
+    const res = await fetch(MOODMETER_API_BASE + "/records/load?userId=" + encodeURIComponent(userId));
+    const result = await res.json();
+
+    data = result.moodWeek || {};
+    dayInfo.forEach(d => { if(!data[d[0]]) data[d[0]] = []; });
+    datedData = result.moodDated || {};
+
+    renderAll();
+  } catch(e) {
+    console.warn("DB 불러오기 실패:", e);
+    data = {};
+    dayInfo.forEach(d => { data[d[0]] = []; });
+    datedData = {};
+    renderAll();
+  }
+}
+
+function resetMemoryForLoginUser(){
+  data = {};
+  dayInfo.forEach(d => { data[d[0]] = []; });
+  datedData = {};
+}
+</script>
+
+
+<script>
+/* FINAL FIX: 기록은 로그인한 userId별로 Cloudflare D1에 저장 */
+const __oldSaveMoodMeter = typeof save === 'function' ? save : null;
+save = function(){
+  // 같은 기기에서 임시로 보이게 localStorage도 보조 저장하지만,
+  // 실제 분리는 userId별 D1 저장/불러오기로 처리
+  try{
+    const userId = getLoginUserId();
+    if(userId){
+      localStorage.setItem('moodWeekV2_' + userId, JSON.stringify(data));
+      localStorage.setItem('moodDatedV1_' + userId, JSON.stringify(datedData));
+    }
+  }catch(e){}
+  apiSaveAllRecords();
+};
+
+async function afterLoginLoadUserRecords(){
+  resetMemoryForLoginUser();
+  renderAll();
+  await apiLoadAllRecords();
+}
+
+// 로그인 성공 후 기존 화면이 이전 기록을 보여주는 것을 막기 위해 강제 새로 불러오기
+window.addEventListener('DOMContentLoaded', function(){
+  setTimeout(function(){
+    if(getLoginUserId()){
+      afterLoginLoadUserRecords();
+    }
+  }, 300);
 });
 </script>
 
