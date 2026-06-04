@@ -1054,30 +1054,30 @@ body.print-month #monthPrintPage{
 }
 
 
-/* PDF 공유 전용: 인쇄 미리보기처럼 무드미터 색 선명하게 */
+/* PDF 공유 전용: 원본 웹 화면과 같은 선명한 무드미터 색상 */
 #pdfWeekPage .cell,
 #pdfMonthPage .cell{
   opacity:1!important;
-  filter:saturate(1.35) contrast(1.12)!important;
+  filter:none!important;
 }
 #pdfWeekPage .cell.red,
 #pdfMonthPage .cell.red{
-  background:linear-gradient(135deg,#9f1f1f,#f05a28)!important;
+  background:linear-gradient(135deg,#8e1b1b,#f05a28)!important;
   color:#fff!important;
 }
 #pdfWeekPage .cell.yellow,
 #pdfMonthPage .cell.yellow{
-  background:linear-gradient(135deg,#fff06a,#f4a51c)!important;
+  background:linear-gradient(135deg,#f6ea65,#f6a91a)!important;
   color:#111!important;
 }
 #pdfWeekPage .cell.blue,
 #pdfMonthPage .cell.blue{
-  background:linear-gradient(135deg,#12308f,#16a9e6)!important;
+  background:linear-gradient(135deg,#1a237e,#2da9e9)!important;
   color:#fff!important;
 }
 #pdfWeekPage .cell.green,
 #pdfMonthPage .cell.green{
-  background:linear-gradient(135deg,#8fd224,#0a982f)!important;
+  background:linear-gradient(135deg,#a5d927,#0f8f2f)!important;
   color:#fff!important;
 }
 #pdfWeekPage .cell span,
@@ -1907,32 +1907,32 @@ function applyPdfStyles(page){
     el.style.margin='0';
   });
 
-  // PDF 공유용 무드미터 색상 선명도 보정
+  // PDF 공유용: 실제 화면 색상처럼 선명하게 고정
   page.querySelectorAll('.cell.red').forEach(el=>{
-    el.style.background='linear-gradient(135deg,#9f1f1f,#f05a28)';
+    el.style.background='linear-gradient(135deg,#8e1b1b,#f05a28)';
     el.style.color='#ffffff';
     el.style.opacity='1';
-    el.style.filter='saturate(1.35) contrast(1.12)';
+    el.style.filter='none';
   });
   page.querySelectorAll('.cell.yellow').forEach(el=>{
-    el.style.background='linear-gradient(135deg,#fff06a,#f4a51c)';
+    el.style.background='linear-gradient(135deg,#f6ea65,#f6a91a)';
     el.style.color='#111111';
     el.style.opacity='1';
-    el.style.filter='saturate(1.25) contrast(1.08)';
+    el.style.filter='none';
   });
   page.querySelectorAll('.cell.blue').forEach(el=>{
-    el.style.background='linear-gradient(135deg,#12308f,#16a9e6)';
+    el.style.background='linear-gradient(135deg,#1a237e,#2da9e9)';
     el.style.color='#ffffff';
     el.style.opacity='1';
-    el.style.filter='saturate(1.35) contrast(1.12)';
+    el.style.filter='none';
   });
   page.querySelectorAll('.cell.green').forEach(el=>{
-    el.style.background='linear-gradient(135deg,#8fd224,#0a982f)';
+    el.style.background='linear-gradient(135deg,#a5d927,#0f8f2f)';
     el.style.color='#ffffff';
     el.style.opacity='1';
-    el.style.filter='saturate(1.35) contrast(1.12)';
+    el.style.filter='none';
   });
-  page.querySelectorAll('.cell span').forEach(el=>{
+  page.querySelectorAll('.cell span,.cell .en').forEach(el=>{
     el.style.opacity='1';
   });
 }
