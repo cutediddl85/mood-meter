@@ -2952,6 +2952,149 @@ window.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 
+
+<script>
+/* FINAL EMAIL DB SAVE FIX v3
+   - 이메일 로그인 userId 기준으로 D1 저장
+   - 저장하기 버튼은 DB 저장 완료 후 알림
+   - 로그아웃 전에 DB 저장 완료
+*/
+function getFinalEmailUser(){
+  try{
+    const user = JSON.parse(localStorage.getItem('moodmeterUser') || 'null');
+    if(user && user.userId) return user;
+  }catch(e){}
+  const userId = localStorage.getItem('moodAuthUserId');
+  const email = localStorage.getItem('moodAuthEmail') || '';
+  if(userId) return {userId, email};
+  return null;
+}
+
+function getFinalEmailUserId(){
+  const user = getFinalEmailUser();
+  return user && user.userId ? String(user.userId) : '';
+}
+
+function syncCurrentRecordToDated(){
+  try{
+    if(typeof currentWeekDateKey === 'function' && typeof currentDay !== 'undefined'){
+      datedData[currentWeekDateKey(currentDay)] = data[currentDay] || [];
+    }
+  }catch(e){}
+}
+
+async function saveFinalEmailRecordsToDB(){
+  const userId = getFinalEmailUserId();
+  if(!userId) return false;
+
+  syncCurrentRecordToDated();
+
+  try{
+    localStorage.setItem('moodWeekV2_' + userId, JSON.stringify(data || {}));
+    localStorage.setItem('moodDatedV1_' + userId, JSON.stringify(datedData || {}));
+  }catch(e){}
+
+  try{
+    const res = await fetch('https://moodmeter-api.cutediddl.workers.dev/records/save', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        userId,
+        moodWeek:data || {},
+        moodDated:datedData || {}
+      })
+    });
+    const result = await res.json();
+    if(!result.success){
+      console.warn('DB 저장 실패:', result);
+      return false;
+    }
+    return true;
+  }catch(e){
+    console.warn('DB 저장 오류:', e);
+    return false;
+  }
+}
+
+async function loadFinalEmailRecordsFromDB(){
+  const userId = getFinalEmailUserId();
+  if(!userId) return false;
+
+  try{
+    const res = await fetch('https://moodmeter-api.cutediddl.workers.dev/records/load?userId=' + encodeURIComponent(userId));
+    const result = await res.json();
+
+    data = result.moodWeek || {};
+    dayInfo.forEach(d=>{ if(!data[d[0]]) data[d[0]]=[]; });
+    datedData = result.moodDated || {};
+
+    try{
+      localStorage.setItem('moodWeekV2_' + userId, JSON.stringify(data || {}));
+      localStorage.setItem('moodDatedV1_' + userId, JSON.stringify(datedData || {}));
+    }catch(e){}
+
+    if(typeof renderAll === 'function') renderAll();
+    return true;
+  }catch(e){
+    console.warn('DB 불러오기 오류:', e);
+    data = {};
+    dayInfo.forEach(d=>{ data[d[0]]=[]; });
+    datedData = {};
+    if(typeof renderAll === 'function') renderAll();
+    return false;
+  }
+}
+
+// 모든 저장 동작을 최종 DB 저장 방식으로 고정
+save = function(){
+  syncCurrentRecordToDated();
+  const userId = getFinalEmailUserId();
+  if(userId){
+    try{
+      localStorage.setItem('moodWeekV2_' + userId, JSON.stringify(data || {}));
+      localStorage.setItem('moodDatedV1_' + userId, JSON.stringify(datedData || {}));
+    }catch(e){}
+  }
+  saveFinalEmailRecordsToDB();
+};
+
+saveDay = async function(){
+  const ok = await saveFinalEmailRecordsToDB();
+  alert(ok ? '저장되었습니다.' : '저장에 실패했습니다. 잠시 후 다시 시도해주세요.');
+};
+
+logoutMoodMeter = async function(){
+  if(!confirm('로그아웃할까요?')) return;
+  await saveFinalEmailRecordsToDB();
+
+  localStorage.removeItem('moodAuthUserId');
+  localStorage.removeItem('moodAuthEmail');
+  localStorage.removeItem('moodmeterUser');
+
+  data = {};
+  dayInfo.forEach(d=>{ data[d[0]]=[]; });
+  datedData = {};
+  if(typeof renderAll === 'function') renderAll();
+  if(typeof showAuthScreen === 'function') showAuthScreen();
+};
+
+const __oldLoginMoodMeterFinal = typeof loginMoodMeter === 'function' ? loginMoodMeter : null;
+if(__oldLoginMoodMeterFinal){
+  loginMoodMeter = async function(fromSignup=false){
+    await __oldLoginMoodMeterFinal(fromSignup);
+    setTimeout(loadFinalEmailRecordsFromDB, 300);
+  };
+}
+
+window.addEventListener('load', function(){
+  setTimeout(function(){
+    if(getFinalEmailUserId()){
+      loadFinalEmailRecordsFromDB();
+    }
+  }, 800);
+});
+</script>
+
 </body>
 <!-- source: uploaded file modified -->
 </html>
