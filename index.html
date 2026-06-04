@@ -1211,8 +1211,8 @@ html.start-login #appShell{
       <input id="signupNameInput" type="text" placeholder="이름" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none">
     </div>
 
-    <input id="authEmailInput" type="email" placeholder="이메일" autocomplete="email" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:10px">
-    <input id="authPasswordInput" type="password" placeholder="비밀번호" autocomplete="current-password" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:10px">
+    <input id="authEmailInput" name="email" type="email" placeholder="이메일" autocomplete="email" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:10px">
+    <input id="authPasswordInput" name="password" type="password" placeholder="비밀번호" autocomplete="current-password" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:10px">
     <input id="authPasswordConfirmInput" type="password" placeholder="비밀번호 확인" autocomplete="new-password" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:14px;display:none">
 
     <button id="authSubmitBtn" type="button" onclick="submitAuth()" style="width:100%;padding:15px;font-size:19px;font-weight:900;border:none;border-radius:16px;background:#4CAF50;color:white;cursor:pointer">로그인하기</button>
@@ -3125,6 +3125,82 @@ window.addEventListener('load', function(){
   }else{
     forceLoginFirst();
   }
+})();
+</script>
+
+
+<script>
+/* FINAL SIGNUP AUTOFILL FIX:
+   - 로그인 화면은 정상 사용
+   - 회원가입 탭을 누르면 이름/이메일/비밀번호/비밀번호 확인 칸을 항상 비웁니다.
+   - 브라우저 자동완성이 회원가입 칸에 남지 않도록 autocomplete를 new-password로 바꿉니다.
+*/
+(function(){
+  const originalShowAuthMode = typeof showAuthMode === 'function' ? showAuthMode : null;
+
+  window.showAuthMode = function(mode){
+    if(originalShowAuthMode){
+      originalShowAuthMode(mode);
+    }
+
+    const emailInput = document.getElementById('authEmailInput');
+    const passwordInput = document.getElementById('authPasswordInput');
+    const passwordConfirmInput = document.getElementById('authPasswordConfirmInput');
+    const nameInput = document.getElementById('signupNameInput');
+
+    if(mode === 'signup'){
+      setTimeout(function(){
+        if(nameInput){
+          nameInput.value = '';
+          nameInput.setAttribute('autocomplete','off');
+        }
+        if(emailInput){
+          emailInput.value = '';
+          emailInput.setAttribute('autocomplete','off');
+          emailInput.setAttribute('name','signup_email_' + Date.now());
+        }
+        if(passwordInput){
+          passwordInput.value = '';
+          passwordInput.setAttribute('autocomplete','new-password');
+          passwordInput.setAttribute('name','signup_password_' + Date.now());
+        }
+        if(passwordConfirmInput){
+          passwordConfirmInput.value = '';
+          passwordConfirmInput.setAttribute('autocomplete','new-password');
+          passwordConfirmInput.setAttribute('name','signup_password_confirm_' + Date.now());
+        }
+      }, 50);
+    }else{
+      if(emailInput){
+        emailInput.setAttribute('autocomplete','email');
+        emailInput.setAttribute('name','email');
+      }
+      if(passwordInput){
+        passwordInput.setAttribute('autocomplete','current-password');
+        passwordInput.setAttribute('name','password');
+      }
+    }
+  };
+
+  // 회원가입 버튼 클릭 시에도 한 번 더 초기화
+  window.addEventListener('DOMContentLoaded', function(){
+    const signupBtn = document.getElementById('signupTabBtn');
+    if(signupBtn){
+      signupBtn.addEventListener('click', function(){
+        setTimeout(function(){
+          const emailInput = document.getElementById('authEmailInput');
+          const passwordInput = document.getElementById('authPasswordInput');
+          const passwordConfirmInput = document.getElementById('authPasswordConfirmInput');
+          const nameInput = document.getElementById('signupNameInput');
+
+          if(nameInput) nameInput.value = '';
+          if(emailInput) emailInput.value = '';
+          if(passwordInput) passwordInput.value = '';
+          if(passwordConfirmInput) passwordConfirmInput.value = '';
+        }, 80);
+      });
+    }
+  });
 })();
 </script>
 
