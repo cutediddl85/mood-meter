@@ -1168,6 +1168,17 @@ body.print-month #monthPrintPage{
   box-sizing:border-box!important;
 }
 
+
+#authScreen input:focus,
+#welcomeScreen input:focus{
+  border-color:#6d4c41!important;
+  box-shadow:0 0 0 3px rgba(109,76,65,.12)!important;
+}
+#authSubmitBtn:disabled{
+  opacity:.55!important;
+  cursor:not-allowed!important;
+}
+
 </style>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -1175,6 +1186,30 @@ body.print-month #monthPrintPage{
 
 </head>
 <body>
+
+<section id="authScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f7f7f2;padding:20px">
+  <div style="width:100%;max-width:460px;background:white;padding:36px 28px;border-radius:24px;box-shadow:0 8px 24px rgba(0,0,0,.08);text-align:center">
+    <div style="font-size:30px;font-weight:900;margin-bottom:8px;color:#222">무드미터 로그인</div>
+    <div style="font-size:14px;color:#666;margin-bottom:22px">회원가입 후 로그인하면 나만의 무드미터 기록을 사용할 수 있어요.</div>
+
+    <div style="display:flex;gap:8px;margin-bottom:18px">
+      <button id="loginTabBtn" type="button" onclick="showAuthMode('login')" style="flex:1;padding:12px;border:0;border-radius:14px;background:#6d4c41;color:white;font-weight:900;cursor:pointer">로그인</button>
+      <button id="signupTabBtn" type="button" onclick="showAuthMode('signup')" style="flex:1;padding:12px;border:0;border-radius:14px;background:#eee;color:#333;font-weight:900;cursor:pointer">회원가입</button>
+    </div>
+
+    <div id="signupNameWrap" style="display:none;margin-bottom:10px">
+      <input id="signupNameInput" type="text" placeholder="이름" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none">
+    </div>
+
+    <input id="authEmailInput" type="email" placeholder="이메일" autocomplete="email" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:10px">
+    <input id="authPasswordInput" type="password" placeholder="비밀번호" autocomplete="current-password" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:10px">
+    <input id="authPasswordConfirmInput" type="password" placeholder="비밀번호 확인" autocomplete="new-password" style="width:100%;padding:14px;font-size:17px;border:2px solid #ddd;border-radius:14px;outline:none;margin-bottom:14px;display:none">
+
+    <button id="authSubmitBtn" type="button" onclick="submitAuth()" style="width:100%;padding:15px;font-size:19px;font-weight:900;border:none;border-radius:16px;background:#4CAF50;color:white;cursor:pointer">로그인하기</button>
+    <div id="authMessage" style="min-height:22px;margin-top:12px;font-size:14px;font-weight:800;color:#c62828"></div>
+  </div>
+</section>
+
 <section id="welcomeScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f7f7f2;padding:20px">
   <div style="width:100%;max-width:420px;background:white;padding:42px 30px;border-radius:24px;box-shadow:0 8px 24px rgba(0,0,0,.08);text-align:center">
     <div style="font-size:28px;font-weight:900;margin-bottom:24px;color:#222">이름을 적어주세요.</div>
@@ -1184,7 +1219,14 @@ body.print-month #monthPrintPage{
 </section>
 
 <div id="appShell" style="display:none">
-<header><h1 id="mainTitle">MOOD METER 무드 미터</h1><div class="subtitle">오늘 감정 3가지를 4분면에서 선택하고, 일주일 동안 머문 색을 확인합니다.</div></header>
+<header>
+  <h1 id="mainTitle">MOOD METER 무드 미터</h1>
+  <div class="subtitle">오늘 감정 3가지를 4분면에서 선택하고, 일주일 동안 머문 색을 확인합니다.</div>
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px">
+    <button type="button" onclick="showNameScreen()" style="border:0;border-radius:999px;padding:8px 14px;font-weight:800;background:#6d4c41;color:white;cursor:pointer">이름 변경하기</button>
+    <button type="button" onclick="logoutMoodMeter()" style="border:0;border-radius:999px;padding:8px 14px;font-weight:800;background:#222;color:white;cursor:pointer">로그아웃</button>
+  </div>
+</header>
 <div class="tabs"><button class="tab active" data-tab="today">오늘 기록</button><button class="tab" data-tab="week">주간 누계</button><button class="tab" data-tab="month">월간 누계</button><button class="tab" data-tab="year">연간 누계</button></div>
 <main class="wrap">
 <section id="today" class="panel active">
@@ -2251,6 +2293,274 @@ window.addEventListener('load',()=>{
 
 </script>
 </div>
+
+<script>
+/* AUTH FINAL: Cloudflare Worker 회원가입/로그인 연결 */
+const MOOD_API_BASE = "https://moodmeter-api.cutediddl.workers.dev";
+let authMode = 'login';
+
+function authUserId(){
+  return localStorage.getItem('moodAuthUserId') || '';
+}
+
+function userKey(base){
+  const id = authUserId();
+  return id ? `${base}_${id}` : base;
+}
+
+function setAuthMessage(msg, color='#c62828'){
+  const el=document.getElementById('authMessage');
+  if(el){
+    el.textContent=msg || '';
+    el.style.color=color;
+  }
+}
+
+function showAuthMode(mode){
+  authMode=mode;
+  const loginBtn=document.getElementById('loginTabBtn');
+  const signupBtn=document.getElementById('signupTabBtn');
+  const nameWrap=document.getElementById('signupNameWrap');
+  const confirmInput=document.getElementById('authPasswordConfirmInput');
+  const submitBtn=document.getElementById('authSubmitBtn');
+
+  if(loginBtn)loginBtn.style.background=mode==='login'?'#6d4c41':'#eee';
+  if(loginBtn)loginBtn.style.color=mode==='login'?'white':'#333';
+  if(signupBtn)signupBtn.style.background=mode==='signup'?'#6d4c41':'#eee';
+  if(signupBtn)signupBtn.style.color=mode==='signup'?'white':'#333';
+
+  if(nameWrap)nameWrap.style.display=mode==='signup'?'block':'none';
+  if(confirmInput)confirmInput.style.display=mode==='signup'?'block':'none';
+  if(submitBtn)submitBtn.textContent=mode==='signup'?'회원가입하기':'로그인하기';
+  setAuthMessage('');
+}
+
+async function submitAuth(){
+  if(authMode==='signup') return signupMoodMeter();
+  return loginMoodMeter();
+}
+
+async function signupMoodMeter(){
+  const name=(document.getElementById('signupNameInput')?.value || '').trim();
+  const email=(document.getElementById('authEmailInput')?.value || '').trim();
+  const password=(document.getElementById('authPasswordInput')?.value || '').trim();
+  const confirm=(document.getElementById('authPasswordConfirmInput')?.value || '').trim();
+
+  if(!name){ setAuthMessage('이름을 입력해주세요.'); return; }
+  if(!email){ setAuthMessage('이메일을 입력해주세요.'); return; }
+  if(!password){ setAuthMessage('비밀번호를 입력해주세요.'); return; }
+  if(password.length < 4){ setAuthMessage('비밀번호는 4자 이상으로 입력해주세요.'); return; }
+  if(password !== confirm){ setAuthMessage('비밀번호 확인이 일치하지 않습니다.'); return; }
+
+  const btn=document.getElementById('authSubmitBtn');
+  if(btn)btn.disabled=true;
+  setAuthMessage('회원가입 중입니다...', '#555');
+
+  try{
+    const res=await fetch(`${MOOD_API_BASE}/signup`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,password})
+    });
+    const result=await res.json();
+
+    if(!result.success){
+      setAuthMessage(result.message || '회원가입에 실패했습니다.');
+      return;
+    }
+
+    localStorage.setItem('pendingMoodName', name);
+    setAuthMessage('회원가입 완료! 바로 로그인합니다.', '#2e7d32');
+    await loginMoodMeter(true);
+  }catch(err){
+    console.error(err);
+    setAuthMessage('회원가입 서버 연결에 실패했습니다. Worker 주소와 배포 상태를 확인해주세요.');
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+async function loginMoodMeter(fromSignup=false){
+  const email=(document.getElementById('authEmailInput')?.value || '').trim();
+  const password=(document.getElementById('authPasswordInput')?.value || '').trim();
+
+  if(!email){ setAuthMessage('이메일을 입력해주세요.'); return; }
+  if(!password){ setAuthMessage('비밀번호를 입력해주세요.'); return; }
+
+  const btn=document.getElementById('authSubmitBtn');
+  if(btn)btn.disabled=true;
+  setAuthMessage('로그인 중입니다...', '#555');
+
+  try{
+    const res=await fetch(`${MOOD_API_BASE}/login`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email,password})
+    });
+    const result=await res.json();
+
+    if(!result.success){
+      setAuthMessage(result.message || '로그인에 실패했습니다.');
+      return;
+    }
+
+    localStorage.setItem('moodAuthUserId', String(result.userId));
+    localStorage.setItem('moodAuthEmail', result.email || email);
+
+    const pendingName=localStorage.getItem('pendingMoodName') || '';
+    if(pendingName){
+      localStorage.setItem(userKey('moodUserName'), pendingName);
+      localStorage.removeItem('pendingMoodName');
+    }
+
+    loadUserMoodData();
+
+    const savedName=localStorage.getItem(userKey('moodUserName')) || '';
+    if(savedName.trim()){
+      showMoodApp();
+    }else{
+      showNameScreen();
+    }
+  }catch(err){
+    console.error(err);
+    setAuthMessage('로그인 서버 연결에 실패했습니다. Worker 주소와 배포 상태를 확인해주세요.');
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+
+function loadUserMoodData(){
+  try{
+    const weekRaw=localStorage.getItem(userKey('moodWeekV2'));
+    const datedRaw=localStorage.getItem(userKey('moodDatedV1'));
+
+    data = weekRaw ? JSON.parse(weekRaw) : {};
+    dayInfo.forEach(d=>{ if(!data[d[0]]) data[d[0]]=[]; });
+
+    datedData = datedRaw ? JSON.parse(datedRaw) : {};
+  }catch(e){
+    console.error('사용자 기록 불러오기 오류:', e);
+    data={};
+    dayInfo.forEach(d=>{ if(!data[d[0]]) data[d[0]]=[]; });
+    datedData={};
+  }
+}
+
+function save(){
+  localStorage.setItem(userKey('moodWeekV2'), JSON.stringify(data));
+  saveDatedCurrent();
+}
+
+function saveDatedCurrent(){
+  datedData[currentWeekDateKey(currentDay)] = data[currentDay] || [];
+  localStorage.setItem(userKey('moodDatedV1'), JSON.stringify(datedData));
+}
+
+function showAuthScreen(){
+  const auth=document.getElementById('authScreen');
+  const welcome=document.getElementById('welcomeScreen');
+  const app=document.getElementById('appShell');
+  if(auth)auth.style.display='flex';
+  if(welcome)welcome.style.display='none';
+  if(app)app.style.display='none';
+  showAuthMode('login');
+}
+
+function showNameScreen(){
+  const auth=document.getElementById('authScreen');
+  const welcome=document.getElementById('welcomeScreen');
+  const app=document.getElementById('appShell');
+  const input=document.getElementById('userNameInput');
+
+  if(auth)auth.style.display='none';
+  if(app)app.style.display='none';
+  if(welcome)welcome.style.display='flex';
+
+  const savedName=localStorage.getItem(userKey('moodUserName')) || '';
+  if(input){
+    input.value=savedName;
+    setTimeout(()=>input.focus(),80);
+  }
+}
+
+function startMoodMeter(){
+  const input=document.getElementById('userNameInput');
+  const name=(input?.value || '').trim();
+  if(!name){
+    alert('이름을 입력해주세요.');
+    if(input)input.focus();
+    return;
+  }
+  localStorage.setItem(userKey('moodUserName'), name);
+  showMoodApp();
+}
+
+function showMoodApp(){
+  const auth=document.getElementById('authScreen');
+  const welcome=document.getElementById('welcomeScreen');
+  const app=document.getElementById('appShell');
+  const name=localStorage.getItem(userKey('moodUserName')) || '나';
+
+  if(auth)auth.style.display='none';
+  if(welcome)welcome.style.display='none';
+  if(app)app.style.display='block';
+
+  const title=document.getElementById('mainTitle');
+  if(title)title.textContent=name+'의 무드미터';
+
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  const todayBtn=document.querySelector('.tab[data-tab="today"]');
+  const todayPanel=document.getElementById('today');
+  if(todayBtn)todayBtn.classList.add('active');
+  if(todayPanel)todayPanel.classList.add('active');
+
+  if(typeof syncCurrentDayToToday==='function') syncCurrentDayToToday();
+  if(typeof renderAll==='function') renderAll();
+}
+
+function logoutMoodMeter(){
+  if(!confirm('로그아웃할까요?'))return;
+  localStorage.removeItem('moodAuthUserId');
+  localStorage.removeItem('moodAuthEmail');
+  showAuthScreen();
+}
+
+function bootAuthFlow(){
+  const passwordInput=document.getElementById('authPasswordInput');
+  const confirmInput=document.getElementById('authPasswordConfirmInput');
+  const emailInput=document.getElementById('authEmailInput');
+  const nameInput=document.getElementById('signupNameInput');
+  [passwordInput,confirmInput,emailInput,nameInput].forEach(el=>{
+    if(el)el.addEventListener('keydown',(e)=>{
+      if(e.key==='Enter')submitAuth();
+    });
+  });
+
+  const nameScreenInput=document.getElementById('userNameInput');
+  if(nameScreenInput){
+    nameScreenInput.addEventListener('keydown',(e)=>{
+      if(e.key==='Enter')startMoodMeter();
+    });
+  }
+
+  currentDay=getTodayDayKey();
+
+  if(authUserId()){
+    loadUserMoodData();
+    const savedName=localStorage.getItem(userKey('moodUserName')) || '';
+    if(savedName.trim()) showMoodApp();
+    else showNameScreen();
+  }else{
+    showAuthScreen();
+  }
+}
+
+window.addEventListener('load',()=>{
+  setTimeout(bootAuthFlow, 0);
+});
+</script>
+
 </body>
 <!-- source: uploaded file modified -->
 </html>
