@@ -6,7 +6,7 @@
 <title>무드미터 주간 감정 기록</title>
 <style>
 :root{--red:#c62828;--yellow:#f7c948;--blue:#1565c0;--green:#2e7d32;--bg:#f7f7f2;--ink:#222;--card:#fff;--line:#ffffff;}
-*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);} header{padding:20px 16px 10px;text-align:center} h1{margin:0;font-size:clamp(26px,5vw,48px);letter-spacing:.5px} .subtitle{margin-top:6px;color:#555}.wrap{max-width:1220px;margin:0 auto;padding:0 12px 40px}.tabs{display:flex;gap:8px;justify-content:center;position:sticky;top:0;background:rgba(247,247,242,.95);backdrop-filter:blur(8px);z-index:10;padding:10px}.tabs button,.action{border:0;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer;background:#222;color:white}.tabs button.active{background:#6d4c41}.panel{display:none}.panel.active{display:block}.guide{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0 14px}.notice{background:white;border-radius:18px;padding:14px 16px;box-shadow:0 4px 16px rgba(0,0,0,.06)}.days{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}.daybtn{border:2px solid transparent;border-radius:999px;padding:8px 13px;font-weight:800;background:white;cursor:pointer}.daybtn.active{border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.08)}.monday{--day:#8e44ad}.tuesday{--day:#ff69b4}.wednesday{--day:#2c3e50}.thursday{--day:#ecf0f1}.friday{--day:#1abc9c}.saturday{--day:#8d6e63}.sunday{--day:#95a5a6}.daybtn .dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--day);border:1px solid #555;margin-right:5px;vertical-align:-1px}.meterbox{background:white;border-radius:22px;padding:18px;box-shadow:0 4px 20px rgba(0,0,0,.07);overflow:auto}.axisTop{padding:0 10px !important;justify-content:space-between;display:flex;justify-content:space-between;font-weight:800;margin:0 0 8px;color:#555}.meter{display:grid;grid-template-columns:repeat(10,minmax(88px,1fr));grid-template-rows:repeat(10,72px);gap:3px;min-width:920px}.cell{position:relative;border:0;border-radius:5px;padding:5px 4px;text-align:center;color:white;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}.cell .en{font-size:10px;font-weight:600;opacity:.9;margin-top:3px}.cell.red{background:linear-gradient(135deg,#8e1b1b,#f05a28)}.cell.yellow{background:linear-gradient(135deg,#f6ea65,#f6a91a);color:#222}.cell.blue{background:linear-gradient(135deg,#1a237e,#2da9e9)}.cell.green{background:linear-gradient(135deg,#a5d927,#0f8f2f)}.cell.selected{outline:4px solid #111;z-index:2;transform:translateY(-2px)}.markers{position:absolute;bottom:3px;left:4px;right:4px;display:flex;gap:2px;justify-content:center;flex-wrap:wrap}.marker{width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.45);background:var(--day)}.selectedList{margin-top:12px;background:#fff;border-radius:18px;padding:14px;box-shadow:0 4px 16px rgba(0,0,0,.05)}.selectedItems{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.entry{border:1px solid #ddd;border-radius:14px;padding:10px}.entry b{display:block;margin-bottom:6px}.entry textarea{width:100%;min-height:64px;border:1px solid #ddd;border-radius:10px;padding:9px;font:inherit;resize:vertical}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.summaryGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.summaryCard{background:white;border-radius:18px;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.06)}.bar{height:22px;background:#eee;border-radius:999px;overflow:hidden;margin:8px 0}.bar>span{display:block;height:100%}.redbar{background:var(--red)}.yellowbar{background:#f5b82e}.bluebar{background:var(--blue)}.greenbar{background:var(--green)}.log{background:white;border-radius:18px;padding:14px;margin-top:12px;box-shadow:0 4px 16px rgba(0,0,0,.06)}.logDay{border-top:1px solid #eee;padding:10px 0}.pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:#f1f1f1;padding:5px 9px;margin:3px;font-weight:700}.smallDot{width:10px;height:10px;border-radius:50%;background:var(--day);border:1px solid #555}.footerNote{font-size:13px;color:#666;margin-top:10px}.quadrantLabels{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 6px;min-width:920px}.quadLabel{border-radius:12px;padding:8px 10px;text-align:center;font-weight:900}.topLabels{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;min-width:920px}.bottomLabels{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;min-width:920px}.quadRed{background:#fde5dd;color:#9a1b1b}.quadYellow{background:#fff4b8;color:#7a4b00}.quadBlue{background:#dfeeff;color:#123b79}.quadGreen{background:#e1f4d1;color:#176229}
+*{box-sizing:border-box} body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);} header{padding:20px 16px 10px;text-align:center} h1{margin:0;font-size:clamp(26px,5vw,48px);letter-spacing:.5px} .subtitle{margin-top:6px;color:#555}.wrap{max-width:1220px;margin:0 auto;padding:0 12px 40px}.tabs{display:flex;gap:8px;justify-content:center;position:sticky;top:0;background:rgba(247,247,242,.95);backdrop-filter:blur(8px);z-index:10;padding:10px}.tabs button,.action{border:0;border-radius:999px;padding:10px 16px;font-weight:700;cursor:pointer;background:#222;color:white}.tabs button.active{background:#6d4c41}.panel{display:none}.panel.active{display:block}.guide{display:grid;grid-template-columns:1fr;gap:10px;margin:10px 0 14px}.notice{background:white;border-radius:18px;padding:14px 16px;box-shadow:0 4px 16px rgba(0,0,0,.06)}.days{display:flex;gap:7px;flex-wrap:wrap;justify-content:center}.daybtn{border:2px solid transparent;border-radius:999px;padding:8px 13px;font-weight:800;background:white;cursor:pointer}.daybtn.active{border-color:#111;box-shadow:0 0 0 3px rgba(0,0,0,.08)}.monday{--day:#9B59B6}.tuesday{--day:#FF66B3}.wednesday{--day:#D7CCC8}.thursday{--day:#2D3436}.friday{--day:#00CEC9}.saturday{--day:#8D6E63}.sunday{--day:#FF8C42}.daybtn .dot{display:inline-block;width:12px;height:12px;border-radius:50%;background:var(--day);border:1px solid #555;margin-right:5px;vertical-align:-1px}.meterbox{background:white;border-radius:22px;padding:18px;box-shadow:0 4px 20px rgba(0,0,0,.07);overflow:auto}.axisTop{padding:0 10px !important;justify-content:space-between;display:flex;justify-content:space-between;font-weight:800;margin:0 0 8px;color:#555}.meter{display:grid;grid-template-columns:repeat(10,minmax(88px,1fr));grid-template-rows:repeat(10,72px);gap:3px;min-width:920px}.cell{position:relative;border:0;border-radius:5px;padding:5px 4px;text-align:center;color:white;font-weight:800;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1;box-shadow:inset 0 0 0 1px rgba(255,255,255,.35)}.cell .en{font-size:10px;font-weight:600;opacity:.9;margin-top:3px}.cell.red{background:linear-gradient(135deg,#8e1b1b,#f05a28)}.cell.yellow{background:linear-gradient(135deg,#f6ea65,#f6a91a);color:#222}.cell.blue{background:linear-gradient(135deg,#1a237e,#2da9e9)}.cell.green{background:linear-gradient(135deg,#a5d927,#0f8f2f)}.cell.selected{outline:4px solid #111;z-index:2;transform:translateY(-2px)}.markers{position:absolute;bottom:3px;left:4px;right:4px;display:flex;gap:2px;justify-content:center;flex-wrap:wrap}.marker{width:10px;height:10px;border-radius:50%;border:1px solid rgba(0,0,0,.45);background:var(--day)}.selectedList{margin-top:12px;background:#fff;border-radius:18px;padding:14px;box-shadow:0 4px 16px rgba(0,0,0,.05)}.selectedItems{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}.entry{border:1px solid #ddd;border-radius:14px;padding:10px}.entry b{display:block;margin-bottom:6px}.entry textarea{width:100%;min-height:64px;border:1px solid #ddd;border-radius:10px;padding:9px;font:inherit;resize:vertical}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.summaryGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}.summaryCard{background:white;border-radius:18px;padding:16px;box-shadow:0 4px 16px rgba(0,0,0,.06)}.bar{height:22px;background:#eee;border-radius:999px;overflow:hidden;margin:8px 0}.bar>span{display:block;height:100%}.redbar{background:var(--red)}.yellowbar{background:#f5b82e}.bluebar{background:var(--blue)}.greenbar{background:var(--green)}.log{background:white;border-radius:18px;padding:14px;margin-top:12px;box-shadow:0 4px 16px rgba(0,0,0,.06)}.logDay{border-top:1px solid #eee;padding:10px 0}.pill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;background:#f1f1f1;padding:5px 9px;margin:3px;font-weight:700}.smallDot{width:10px;height:10px;border-radius:50%;background:var(--day);border:1px solid #555}.footerNote{font-size:13px;color:#666;margin-top:10px}.quadrantLabels{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:0 0 6px;min-width:920px}.quadLabel{border-radius:12px;padding:8px 10px;text-align:center;font-weight:900}.topLabels{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;min-width:920px}.bottomLabels{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;min-width:920px}.quadRed{background:#fde5dd;color:#9a1b1b}.quadYellow{background:#fff4b8;color:#7a4b00}.quadBlue{background:#dfeeff;color:#123b79}.quadGreen{background:#e1f4d1;color:#176229}
 .qPill{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:6px 10px;margin:3px;font-weight:900;border:1px solid rgba(0,0,0,.12)}
 .qPill.red{background:#fde5dd;color:#9a1b1b}
 .qPill.yellow{background:#fff4b8;color:#7a4b00}
@@ -955,7 +955,25 @@ body.print-month #monthPrintPage{
   }
 }
 
+
+#pdfWeekPage .panel,
+#pdfMonthPage .panel{
+  display:block!important;
+}
+#pdfWeekPage .meterbox,
+#pdfMonthPage .meterbox{
+  overflow:visible!important;
+}
+#pdfWeekPage .actions,
+#pdfMonthPage .actions{
+  display:none!important;
+}
+
 </style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 </head>
 <body>
 <section id="welcomeScreen" style="min-height:100vh;display:flex;align-items:center;justify-content:center;background:#f7f7f2;padding:20px">
@@ -997,7 +1015,7 @@ body.print-month #monthPrintPage{
 </div></div>
 <div class="selectedList"><h3>오늘 선택한 감정과 이벤트</h3><div id="selectedItems" class="selectedItems"></div><div class="actions"><button class="action" onclick="saveDay()">저장하기</button><button class="action" onclick="clearToday()">오늘 선택 초기화</button></div><div class="footerNote">브라우저에 자동 저장됩니다. 같은 기기에서 이어서 볼 수 있습니다.</div></div>
 </section>
-<section id="week" class="panel"><div class="notice"><b>주간 누계</b> 7일 동안 선택한 감정이 초록 중 어디에 많이 머물렀는지 확인합니다.</div><div id="weekRange" style="text-align:center;font-weight:900;margin:10px 0;font-size:18px"></div><div class="actions"><button class="action printBtn" onclick="window.print()">주간 인쇄하기</button></div><div id="dayLegend" class="dayLegend"></div><div id="summary" class="summaryGrid"></div><div class="meterbox" style="margin-top:12px">
+<section id="week" class="panel"><div class="notice"><b>주간 누계</b> 7일 동안 선택한 감정이 초록 중 어디에 많이 머물렀는지 확인합니다.</div><div id="weekRange" style="text-align:center;font-weight:900;margin:10px 0;font-size:18px"></div><div class="actions"><button class="action printBtn" onclick="window.print()">주간 인쇄하기</button><button class="action printBtn" onclick="shareWeekPDF()">PDF파일 공유하기</button></div><div id="dayLegend" class="dayLegend"></div><div id="summary" class="summaryGrid"></div><div class="meterbox" style="margin-top:12px">
   <div class="meterWithSideAxis">
     <div class="sideAxis">
       <span class="verticalEnergy">활<br>력<br>높<br>음<br>↑</span>
@@ -1038,7 +1056,7 @@ body.print-month #monthPrintPage{
   <div id="monthScreenWeeks" class="yearStepScreen">
     <button class="stepBack" onclick="showMonthScreen('months')">← 월 선택으로</button>
     <div id="selectedMonthTitle" class="monthDetailTitle"></div>
-    <div class="actions"><button class="action printBtn" onclick="printSelectedMonth()">월간 인쇄</button></div>
+    <div class="actions"><button class="action printBtn" onclick="printSelectedMonth()">월간 인쇄하기</button><button class="action printBtn" onclick="shareSelectedMonthPDF()">PDF파일 공유하기</button></div>
     <div class="monthWeekGrid" id="monthWeeks"></div>
   </div>
 
@@ -1065,7 +1083,7 @@ body.print-month #monthPrintPage{
   <div id="yearScreenWeeks" class="yearStepScreen">
     <button class="stepBack" onclick="showYearScreen('months')">← 월 선택으로</button>
     <div id="selectedYearMonthTitle" class="stepTitle"></div>
-    <div class="actions"><button class="action printBtn" onclick="printSelectedYearMonth()">월간 인쇄</button></div>
+    <div class="actions"><button class="action printBtn" onclick="printSelectedYearMonth()">월간 인쇄하기</button><button class="action printBtn" onclick="shareSelectedYearMonthPDF()">PDF파일 공유하기</button></div>
     <div class="monthWeekGrid" id="yearMonthWeeks"></div>
   </div>
 
@@ -1114,7 +1132,7 @@ body.print-month #monthPrintPage{
 </section>
 </main>
 <script>
-const dayInfo=[['mon','월','#8e44ad','monday'],['tue','화','#ff69b4','tuesday'],['wed','수','#2c3e50','wednesday'],['thu','목','#ecf0f1','thursday'],['fri','금','#1abc9c','friday'],['sat','토','#8d6e63','saturday'],['sun','일','#95a5a6','sunday']];
+const dayInfo=[['mon','월','#9B59B6','monday'],['tue','화','#FF66B3','tuesday'],['wed','수','#D7CCC8','wednesday'],['thu','목','#2D3436','thursday'],['fri','금','#00CEC9','friday'],['sat','토','#8D6E63','saturday'],['sun','일','#FF8C42','sunday']];
 const red=[['격분한','Enraged'],['공황에 빠진','Panicked'],['스트레스 받는','Stressed'],['초조한','Jittery'],['충격받은','Shocked'],['격노한','Livid'],['몹시 화가 난','Furious'],['좌절한','Frustrated'],['신경이 날카로운','Tense'],['망연자실한','Stunned'],['화가 치밀어 오른','Fuming'],['겁먹은','Frightened'],['화난','Angry'],['초조한','Nervous'],['안절부절못하는','Restless'],['불안한','Anxious'],['우려하는','Apprehensive'],['근심하는','Worried'],['짜증나는','Irritated'],['거슬리는','Annoyed'],['불쾌한','Repulsed'],['골치 아픈','Troubled'],['염려하는','Concerned'],['마음이 불편한','Uneasy'],['언짢은','Peeved']];
 const yellow=[['놀란','Surprised'],['긍정적인','Upbeat'],['흥겨운','Festive'],['아주 신나는','Exhilarated'],['황홀한','Ecstatic'],['들뜬','Hyper'],['쾌활한','Cheerful'],['동기 부여된','Motivated'],['영감을 받은','Inspired'],['의기양양한','Elated'],['기운이 넘치는','Energized'],['활발한','Lively'],['흥분한','Excited'],['낙관적인','Optimistic'],['열광하는','Enthusiastic'],['만족스러운','Pleased'],['집중하는','Focused'],['행복한','Happy'],['자랑스러운','Proud'],['짜릿한','Thrilled'],['유쾌한','Pleasant'],['기쁜','Joyful'],['희망찬','Hopeful'],['재미있는','Playful'],['더없이 행복한','Blissful']];
 const blue=[['역겨운','Disgusted'],['침울한','Glum'],['실망스러운','Disappointed'],['의욕 없는','Down'],['냉담한','Apathetic'],['비관적인','Pessimistic'],['시무룩한','Morose'],['낙담한','Discouraged'],['슬픈','Sad'],['지루한','Bored'],['소외된','Alienated'],['비참한','Miserable'],['쓸쓸한','Lonely'],['기죽은','Disheartened'],['피곤한','Tired'],['의기소침한','Despondent'],['우울한','Depressed'],['뚱한','Sullen'],['기진맥진한','Exhausted'],['지친','Fatigued'],['절망한','Despairing'],['가망 없는','Hopeless'],['고독한','Desolate'],['소모된','Spent'],['진이 빠진','Drained']];
@@ -1619,6 +1637,150 @@ function syncCurrentDayToToday(){
   if(typeof renderMeter==='function') renderMeter();
   if(typeof renderSelected==='function') renderSelected();
   if(typeof renderDayLegend==='function') renderDayLegend();
+}
+
+
+async function createPdfFromElement(element, fileName, orientation='landscape'){
+  if(!window.html2canvas || !window.jspdf){
+    alert('PDF 생성 도구를 불러오지 못했습니다. 인터넷 연결을 확인해주세요.');
+    return;
+  }
+
+  const { jsPDF } = window.jspdf;
+
+  const originalOverflow = element.style.overflow;
+  element.style.overflow = 'visible';
+
+  const canvas = await html2canvas(element, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#ffffff',
+    windowWidth: element.scrollWidth,
+    windowHeight: element.scrollHeight
+  });
+
+  element.style.overflow = originalOverflow;
+
+  const pdf = new jsPDF({
+    orientation,
+    unit: 'mm',
+    format: 'a4'
+  });
+
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+
+  const imgData = canvas.toDataURL('image/png');
+  const imgWidth = pageWidth;
+  const imgHeight = canvas.height * imgWidth / canvas.width;
+
+  let heightLeft = imgHeight;
+  let position = 0;
+
+  pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+  heightLeft -= pageHeight;
+
+  while(heightLeft > 0){
+    position = heightLeft - imgHeight;
+    pdf.addPage();
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+  }
+
+  const blob = pdf.output('blob');
+  const file = new File([blob], fileName, { type:'application/pdf' });
+
+  if(navigator.canShare && navigator.canShare({ files:[file] })){
+    await navigator.share({
+      files:[file],
+      title:fileName,
+      text:'무드미터 기록 PDF입니다.'
+    });
+  }else{
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+    alert('이 기기에서는 자동 공유가 지원되지 않아 PDF 파일로 저장했습니다. 저장된 파일을 카카오톡 등에서 공유해주세요.');
+  }
+}
+
+function buildWeekPdfPage(){
+  const source = document.getElementById('week');
+  if(!source)return null;
+
+  const clone = source.cloneNode(true);
+
+  clone.querySelectorAll('.notice,.actions,.log').forEach(el=>el.remove());
+
+  const page = document.createElement('div');
+  page.id = 'pdfWeekPage';
+  page.style.position = 'fixed';
+  page.style.left = '-99999px';
+  page.style.top = '0';
+  page.style.width = '1120px';
+  page.style.background = '#ffffff';
+  page.style.padding = '20px';
+  page.style.boxSizing = 'border-box';
+  page.appendChild(clone);
+  document.body.appendChild(page);
+
+  clone.style.display = 'block';
+  clone.classList.add('active');
+
+  return page;
+}
+
+async function shareWeekPDF(){
+  const page = buildWeekPdfPage();
+  if(!page)return;
+  await createPdfFromElement(page, '주간_무드미터.pdf', 'landscape');
+  page.remove();
+}
+
+function buildMonthPdfPage(year, monthIndex){
+  renderMonthPrintMeter(year, monthIndex);
+
+  const source = document.getElementById('monthPrintPage');
+  if(!source)return null;
+
+  const clone = source.cloneNode(true);
+
+  const page = document.createElement('div');
+  page.id = 'pdfMonthPage';
+  page.style.position = 'fixed';
+  page.style.left = '-99999px';
+  page.style.top = '0';
+  page.style.width = '1120px';
+  page.style.background = '#ffffff';
+  page.style.padding = '20px';
+  page.style.boxSizing = 'border-box';
+
+  clone.style.display = 'block';
+  clone.classList.add('active');
+
+  page.appendChild(clone);
+  document.body.appendChild(page);
+  return page;
+}
+
+async function shareSelectedMonthPDF(){
+  const year = new Date().getFullYear();
+  const page = buildMonthPdfPage(year, selectedMonthIndex);
+  if(!page)return;
+  await createPdfFromElement(page, `${year}년_${selectedMonthIndex+1}월_무드미터.pdf`, 'landscape');
+  page.remove();
+}
+
+async function shareSelectedYearMonthPDF(){
+  const page = buildMonthPdfPage(selectedYearValue, selectedYearMonthIndex);
+  if(!page)return;
+  await createPdfFromElement(page, `${selectedYearValue}년_${selectedYearMonthIndex+1}월_무드미터.pdf`, 'landscape');
+  page.remove();
 }
 
 function getTodayKey(){
